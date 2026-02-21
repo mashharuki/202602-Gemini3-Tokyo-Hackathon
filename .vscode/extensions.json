@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "NomicFoundation.hardhat-solidity",
+    "bradlc.vscode-tailwindcss",
+    "arcanis.vscode-zipfs",
+    "editorconfig.editorconfig"
+  ]
+}
