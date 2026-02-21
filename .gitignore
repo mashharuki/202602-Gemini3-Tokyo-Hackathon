@@ -5,3 +5,8 @@ node_modules
 # sqlite indexer data
 *.db
 *.db-journal
+
+# environment files
+.env
+
+**/__pycache__

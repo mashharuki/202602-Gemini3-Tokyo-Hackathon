@@ -77,7 +77,7 @@
 
 ### 3.1 (P) 音声エージェントの型定義を作成する
 
-- [ ] 3.1 (P) 音声エージェントの型定義を作成する
+- [x] 3.1 (P) 音声エージェントの型定義を作成する
   - 接続状態型 (`disconnected`, `connecting`, `connected`, `reconnecting`, `error`) を定義する
   - Downstream メッセージ型（worldPatch, adkEvent, error の判別共用体）を定義する
   - ADK イベントペイロード型（author, turnComplete, content, parts 等）を定義する
@@ -88,7 +88,7 @@
 
 ### 3.2 (P) PCM 変換ユーティリティを実装しテストを書く
 
-- [ ] 3.2 (P) PCM 変換ユーティリティを実装しテストを書く
+- [x] 3.2 (P) PCM 変換ユーティリティを実装しテストを書く
   - `floatTo16BitPCM` 関数で Float32Array を Int16Array に変換する（クランプ処理含む）
   - `parsePcmRate` 関数で MIME タイプ文字列からサンプルレートを解析する（例: `audio/pcm;rate=24000` → 24000）
   - `decodeBase64ToArrayBuffer` 関数で base64 文字列を ArrayBuffer にデコードする
@@ -99,7 +99,7 @@
 
 ### 3.3 (P) 接続状態マシンを実装しテストを書く
 
-- [ ] 3.3 (P) 接続状態マシンを実装しテストを書く
+- [x] 3.3 (P) 接続状態マシンを実装しテストを書く
   - 純粋関数 `connectionStateMachine(state, event)` を実装し、状態とイベントから次の状態を返す
   - 遷移ルール: `disconnected` → `connecting`, `connecting` → `connected` or `error`, `connected` → `disconnected` or `error`, `error` → `reconnecting`, `reconnecting` → `connected` or `error`
   - 無効な遷移では現在の状態を維持する
@@ -117,7 +117,7 @@
 
 ### 4.1 (P) マイク入力キャプチャモジュールを実装する
 
-- [ ] 4.1 (P) マイク入力キャプチャモジュールを実装する
+- [x] 4.1 (P) マイク入力キャプチャモジュールを実装する
   - `startAudioCapture` 関数で `getUserMedia({ audio: true })` によりマイクアクセスを取得する
   - `AudioContext` を 16kHz サンプルレートで作成する
   - `ScriptProcessorNode`（bufferSize: 4096）で音声フレームを処理する
@@ -128,7 +128,7 @@
 
 ### 4.2 (P) 音声応答再生モジュールを実装する
 
-- [ ] 4.2 (P) 音声応答再生モジュールを実装する
+- [x] 4.2 (P) 音声応答再生モジュールを実装する
   - `createAudioPlayback` 関数で 24kHz サンプルレートの再生用 `AudioContext` を作成する
   - `playPcmChunk` 関数で base64 データを ArrayBuffer にデコードし、MIME タイプからサンプルレートを解析する
   - `AudioBufferSourceNode` を使い、`nextPlayAt` タイムスタンプでシームレスにスケジュール再生する
@@ -145,7 +145,7 @@
 
 ### 5.1 WebSocket 接続マネージャーを実装する
 
-- [ ] 5.1 WebSocket 接続マネージャーを実装する
+- [x] 5.1 WebSocket 接続マネージャーを実装する
   - WebSocket インスタンスの生成・管理を行うモジュールを作成する
   - `ws(s)://{host}/ws/{userId}/{sessionId}` に接続する関数を提供する
   - 接続状態マシンと連携し、接続/切断/エラーイベントに応じて状態を遷移させる
@@ -155,7 +155,7 @@
 
 ### 5.2 世界パッチイベントハンドラーを実装しテストを書く
 
-- [ ] 5.2 世界パッチイベントハンドラーを実装しテストを書く
+- [x] 5.2 世界パッチイベントハンドラーを実装しテストを書く
   - `handleDownstreamMessage` 関数で WebSocket テキストメッセージを解析し、`DownstreamMessage` 型に分類する
   - `type: "worldPatch"` メッセージから `WorldPatchJSON` を抽出する
   - `applyWorldPatchFromAgent` 関数で `validateWorldPatch` → `systemCalls.applyWorldPatch` の流れを実装する
