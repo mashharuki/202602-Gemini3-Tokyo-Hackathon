@@ -2,11 +2,11 @@
 // Workaround react-three-fiber types by disabling unknown properties:
 // https://github.com/pmndrs/react-three-fiber/discussions/2487
 
-import { Canvas, Color, ThreeElements, useThree } from "@react-three/fiber";
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { getComponentValueStrict, Has } from "@latticexyz/recs";
-import { useMUD } from "./MUDContext";
-import { useKeyboardMovement } from "./useKeyboardMovement";
+import { Canvas, Color, ThreeElements, useThree } from "@react-three/fiber";
+import { useMUD } from "./context/MUDContext";
+import { useKeyboardMovement } from "./hooks/useKeyboardMovement";
 
 const headerStyle = { backgroundColor: "black", color: "white" };
 const cellStyle = { padding: 20 };
