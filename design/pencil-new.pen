@@ -1,0 +1,1756 @@
+{
+  "version": "2.8",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "EIDOLON Craft Realm",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "#9ED2FF",
+      "layout": "vertical",
+      "gap": 18,
+      "padding": 24,
+      "children": [
+        {
+          "type": "frame",
+          "id": "VxAjX",
+          "name": "header",
+          "width": "fill_container",
+          "height": 72,
+          "fill": "#7DB25A",
+          "stroke": {
+            "align": "inside",
+            "thickness": {
+              "bottom": 2
+            },
+            "fill": "#4F6F37"
+          },
+          "padding": [
+            0,
+            8
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "nVlld",
+              "name": "brand",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "5fBUP",
+                  "name": "logo",
+                  "width": 20,
+                  "height": 20,
+                  "fill": "#8B6A4A",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#5A422D"
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "sYiDA",
+                  "name": "brandTitle",
+                  "fill": "#F8F2D8",
+                  "content": "EIDOLON CRAFT",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "qjqoo",
+                  "name": "brandSub",
+                  "fill": "#E6F4D5",
+                  "content": "Voice Sandbox Adventure",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "YRCFk",
+              "name": "headerRight",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "IFS8y",
+                  "name": "stateLive",
+                  "fill": "#6E8E4B",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#4F6F37"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    8,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ch8eV",
+                      "name": "stateLiveText",
+                      "fill": "#F0FFD8",
+                      "content": "WORLD: ONLINE",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "A7IxI",
+                  "name": "stateEngine",
+                  "fill": "#8B6A4A",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#5A422D"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    8,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "H0obw",
+                      "name": "stateEngineText",
+                      "fill": "#FFECCF",
+                      "content": "Three.js + MUD",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "5OgKl",
+          "name": "body",
+          "width": "fill_container",
+          "height": "fill_container",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "AtVaX",
+              "name": "World Controls",
+              "width": 320,
+              "height": "fill_container",
+              "fill": "#C7A27A",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#7B5B3B"
+              },
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "KtVHQ",
+                  "name": "leftTitle",
+                  "fill": "#3D2A19",
+                  "content": "INVENTORY / CRAFT",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "rwFq2",
+                  "name": "invCard",
+                  "width": "fill_container",
+                  "fill": "#E1C39D",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#7B5B3B"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "kCVRl",
+                      "name": "invHead",
+                      "fill": "#3D2A19",
+                      "content": "BACKPACK",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "b1TV6",
+                      "name": "invGrid1",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "SoJqt",
+                          "name": "slot11",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "USu5B",
+                          "name": "slot12",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CqWyR",
+                          "name": "slot13",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CES4Q",
+                          "name": "slot14",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#6E8E4B",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#4F6F37"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "v654U",
+                      "name": "invGrid2",
+                      "width": "fill_container",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "P2Miy",
+                          "name": "slot21",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "8bXJj",
+                          "name": "slot22",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ZChRY",
+                          "name": "slot23",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rZvpX",
+                          "name": "slot24",
+                          "width": 34,
+                          "height": 34,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oJeFv",
+                  "name": "craftCard",
+                  "width": "fill_container",
+                  "fill": "#E1C39D",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#7B5B3B"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Tv1nA",
+                      "name": "craftHead",
+                      "fill": "#3D2A19",
+                      "content": "CRAFTING",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "gAULa",
+                      "name": "recipeRow",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XaZ5t",
+                          "name": "recipeText",
+                          "fill": "#5A422D",
+                          "content": "Wood + Stone => Tower",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "9CjQM",
+                      "name": "craftBtn",
+                      "width": "fill_container",
+                      "fill": "#6E8E4B",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 2,
+                        "fill": "#4F6F37"
+                      },
+                      "padding": [
+                        7,
+                        8
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cJXLR",
+                          "name": "craftBtnText",
+                          "fill": "#F2FFE6",
+                          "content": "Craft Now",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "RvP5i",
+                  "name": "voiceCardNew",
+                  "width": "fill_container",
+                  "fill": "#E1C39D",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#7B5B3B"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wBW6g",
+                      "name": "voiceHeadNew",
+                      "fill": "#3D2A19",
+                      "content": "VOICE COMMAND",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "By0oF",
+                      "name": "voiceLineNew",
+                      "fill": "#5A422D",
+                      "content": "\"Build a watch tower and spawn slime\"",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "CWfx6",
+                  "name": "questCard",
+                  "width": "fill_container",
+                  "fill": "#E1C39D",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#7B5B3B"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OoVua",
+                      "name": "questHead",
+                      "fill": "#3D2A19",
+                      "content": "QUEST",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "oVMZA",
+                      "name": "quest1",
+                      "fill": "#5A422D",
+                      "content": "1. Build watch tower",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "RPcFX",
+                      "name": "quest2",
+                      "fill": "#5A422D",
+                      "content": "2. Defend east village",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "f8MrA",
+                      "name": "quest3",
+                      "fill": "#5A422D",
+                      "content": "3. Gather 20 wood",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Q6rEM",
+                  "name": "statusCard",
+                  "width": "fill_container",
+                  "fill": "#E1C39D",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#7B5B3B"
+                  },
+                  "layout": "vertical",
+                  "gap": 6,
+                  "padding": 10,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "i7FGj",
+                      "name": "statusHead",
+                      "fill": "#3D2A19",
+                      "content": "STATUS",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "jZNJV",
+                      "name": "status1",
+                      "fill": "#5A422D",
+                      "content": "Biome: Plains",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "EUZXu",
+                      "name": "status2",
+                      "fill": "#5A422D",
+                      "content": "Weather: Clear",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WqRq4",
+                      "name": "status3",
+                      "fill": "#5A422D",
+                      "content": "Auto Spawn: ON",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1ABqb",
+              "name": "centerColumn",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lEbzq",
+                  "name": "viewportHeader",
+                  "width": "fill_container",
+                  "height": 48,
+                  "padding": [
+                    0,
+                    6
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BQKuh",
+                      "name": "viewportTitle",
+                      "fill": "#24361A",
+                      "content": "WORLD VIEWPORT // ISOMETRIC FIELD",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xBBzs",
+                      "name": "viewportStats",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Nw2Oa",
+                          "name": "statLight",
+                          "fill": "#2F4F1F",
+                          "content": "Light 82%",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "3Jnqe",
+                          "name": "statRipple",
+                          "fill": "#2F4F1F",
+                          "content": "Ripple 0.47",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Ic3QA",
+                          "name": "statRes",
+                          "fill": "#2F4F1F",
+                          "content": "Resonance 1.34",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "8OtCD",
+                  "name": "viewport",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#87C66B",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "#4F6F37"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 18,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "L05JH",
+                      "name": "sceneBanner",
+                      "width": "fill_container",
+                      "fill": "#D3B48E",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 2,
+                        "fill": "#7B5B3B"
+                      },
+                      "padding": 8,
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BbnF0",
+                          "name": "sceneMode",
+                          "fill": "#3D2A19",
+                          "content": "HP 84/100  STA 62/100  MANA 41/100",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PQOxO",
+                          "name": "sceneTick",
+                          "fill": "#5A422D",
+                          "content": "Quest: Defend East Village",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "3Yr00",
+                      "name": "patchToast",
+                      "fill": "#E1C39D",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 2,
+                        "fill": "#7B5B3B"
+                      },
+                      "gap": 8,
+                      "padding": [
+                        6,
+                        10
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EtrEh",
+                          "name": "patchToastText",
+                          "fill": "#3D2A19",
+                          "content": "PATCH: {build:tower, spawn:slime}",
+                          "fontFamily": "JetBrains Mono",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PhwGs",
+                      "name": "World Arena",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#8EC9FF",
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 2,
+                        "fill": "#4F6F37"
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "tVclN",
+                          "x": 80,
+                          "y": 120,
+                          "name": "ridge",
+                          "width": 440,
+                          "height": 220,
+                          "fill": "#7CB160",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#4F6F37"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "YlQYN",
+                          "x": 110,
+                          "y": 150,
+                          "name": "tileA1",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#8FBE70",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "B1dD7",
+                          "x": 172,
+                          "y": 150,
+                          "name": "tileA2",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#8FBE70",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "9tAmh",
+                          "x": 234,
+                          "y": 150,
+                          "name": "tileA3",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#8FBE70",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "6PHJJ",
+                          "x": 296,
+                          "y": 150,
+                          "name": "tileA4",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#8FBE70",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "TGR8Z",
+                          "x": 140,
+                          "y": 180,
+                          "name": "tileB1",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#84B567",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "MckDE",
+                          "x": 202,
+                          "y": 180,
+                          "name": "tileB2",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#84B567",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "J4uyB",
+                          "x": 264,
+                          "y": 180,
+                          "name": "tileB3",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#84B567",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "7xf0p",
+                          "x": 326,
+                          "y": 180,
+                          "name": "tileB4",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#84B567",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#5B8140"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "9iAzK",
+                          "x": 170,
+                          "y": 210,
+                          "name": "tileC1",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#789F5D",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#4D7138"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "AXv5c",
+                          "x": 232,
+                          "y": 210,
+                          "name": "tileC2",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#789F5D",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#4D7138"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "0Jmte",
+                          "x": 294,
+                          "y": 210,
+                          "name": "tileC3",
+                          "width": 56,
+                          "height": 24,
+                          "fill": "#789F5D",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#4D7138"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "UByQv",
+                          "x": 252,
+                          "y": 238,
+                          "name": "towerBase",
+                          "width": 72,
+                          "height": 44,
+                          "fill": "#8B6A4A",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#5A422D"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "dvYTA",
+                          "x": 268,
+                          "y": 204,
+                          "name": "towerTop",
+                          "width": 40,
+                          "height": 34,
+                          "fill": "#A98257",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#5A422D"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "vYZsx",
+                          "x": 214,
+                          "y": 238,
+                          "name": "heroIso",
+                          "width": 22,
+                          "height": 34,
+                          "fill": "#C7E8FF",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#5A422D"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "BmouW",
+                          "x": 346,
+                          "y": 244,
+                          "name": "slimeIso",
+                          "width": 24,
+                          "height": 20,
+                          "fill": "#6C7A3B",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#3F5A2C"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "2y5N2",
+                          "x": 196,
+                          "y": 216,
+                          "name": "heroTagIso",
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#7B5B3B"
+                          },
+                          "padding": [
+                            3,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "I2bxg",
+                              "name": "heroTagIsoText",
+                              "fill": "#3D2A19",
+                              "content": "Hero",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "0hiqo",
+                          "x": 334,
+                          "y": 222,
+                          "name": "slimeTagIso",
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#7B5B3B"
+                          },
+                          "padding": [
+                            3,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Q9Bmd",
+                              "name": "slimeTagIsoText",
+                              "fill": "#3D2A19",
+                              "content": "Slime",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "n5n2m",
+                          "x": 190,
+                          "y": 308,
+                          "name": "quickbar",
+                          "width": 220,
+                          "height": 28,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          },
+                          "gap": 4,
+                          "padding": 4,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "0dVHe",
+                              "name": "slot2",
+                              "width": 24,
+                              "height": 20,
+                              "fill": "#C7A27A",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#7B5B3B"
+                              },
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Lzzs6",
+                                  "name": "slotIcon2",
+                                  "width": 12,
+                                  "height": 12,
+                                  "fill": "#6E8E4B"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "AXr3U",
+                              "name": "slot3",
+                              "width": 24,
+                              "height": 20,
+                              "fill": "#C7A27A",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#7B5B3B"
+                              },
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "TnUHt",
+                                  "name": "slotIcon3",
+                                  "width": 12,
+                                  "height": 12,
+                                  "fill": "#C7E8FF"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Ij4Ls",
+                              "name": "slot4",
+                              "width": 24,
+                              "height": 20,
+                              "fill": "#C7A27A",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#7B5B3B"
+                              },
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "XFSSY",
+                                  "name": "slotIcon4",
+                                  "width": 12,
+                                  "height": 12,
+                                  "fill": "#A98257"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "7AlqA",
+                              "name": "slot5",
+                              "width": 24,
+                              "height": 20,
+                              "fill": "#C7A27A",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#7B5B3B"
+                              },
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "H8cso",
+                                  "name": "slotIcon5",
+                                  "width": 12,
+                                  "height": 12,
+                                  "fill": "#8FBE70"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "F3DXA",
+                              "name": "slot6",
+                              "width": 24,
+                              "height": 20,
+                              "fill": "#C7A27A",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#7B5B3B"
+                              },
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "VsMYx",
+                                  "name": "slotIcon6",
+                                  "width": 12,
+                                  "height": 12,
+                                  "fill": "#E3C7A0"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "1wuwN",
+                              "name": "slot7",
+                              "width": 24,
+                              "height": 20,
+                              "fill": "#C7A27A",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#7B5B3B"
+                              },
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "YYE26",
+                                  "name": "slotIcon7",
+                                  "width": 12,
+                                  "height": 12,
+                                  "fill": "#6C7A3B"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "6TiVx",
+                              "name": "slot8",
+                              "width": 24,
+                              "height": 20,
+                              "fill": "#C7A27A",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#7B5B3B"
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "DJxaM",
+                          "x": 196,
+                          "y": 312,
+                          "name": "activeQuick",
+                          "width": 24,
+                          "height": 20,
+                          "fill": "#F5DA5B",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#A58A2E"
+                          },
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "pJNr8",
+                              "name": "slotIcon1",
+                              "width": 12,
+                              "height": 12,
+                              "fill": "#8B6A4A"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "0cOuX",
+                          "x": 468,
+                          "y": 14,
+                          "name": "minimap",
+                          "width": 130,
+                          "height": 96,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NLOVQ",
+                              "name": "minimapHead",
+                              "fill": "#3D2A19",
+                              "content": "MINIMAP",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "yilGQ",
+                              "name": "minimapGrid",
+                              "width": "fill_container",
+                              "height": 66,
+                              "fill": "#8FBE70",
+                              "stroke": {
+                                "align": "inside",
+                                "thickness": 1,
+                                "fill": "#5B8140"
+                              },
+                              "layout": "none",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "ovthM",
+                                  "x": 8,
+                                  "y": 8,
+                                  "name": "miniWater",
+                                  "width": 30,
+                                  "height": 16,
+                                  "fill": "#8EC9FF"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "IRqaC",
+                                  "x": 46,
+                                  "y": 26,
+                                  "name": "miniVillage",
+                                  "width": 18,
+                                  "height": 14,
+                                  "fill": "#8B6A4A"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "4mPh4",
+                                  "x": 28,
+                                  "y": 42,
+                                  "name": "miniHero",
+                                  "width": 8,
+                                  "height": 8,
+                                  "fill": "#C7E8FF",
+                                  "stroke": {
+                                    "align": "inside",
+                                    "thickness": 1,
+                                    "fill": "#5A422D"
+                                  }
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "9FTEq",
+                                  "x": 76,
+                                  "y": 34,
+                                  "name": "miniEnemy",
+                                  "width": 9,
+                                  "height": 9,
+                                  "fill": "#6C7A3B",
+                                  "stroke": {
+                                    "align": "inside",
+                                    "thickness": 1,
+                                    "fill": "#3F5A2C"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "RBVAo",
+                          "x": 14,
+                          "y": 14,
+                          "name": "questTrack",
+                          "width": 190,
+                          "height": 90,
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          },
+                          "layout": "vertical",
+                          "gap": 4,
+                          "padding": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "tq1Uc",
+                              "name": "questTrackHead",
+                              "fill": "#3D2A19",
+                              "content": "ACTIVE QUEST",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "wveoq",
+                              "name": "questTrack1",
+                              "fill": "#5A422D",
+                              "content": "- Build watch tower",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ZSSxR",
+                              "name": "questTrack2",
+                              "fill": "#5A422D",
+                              "content": "- Defend east village",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ntfY0",
+                              "name": "questTrack3",
+                              "fill": "#5A422D",
+                              "content": "Reward: 240 XP",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "kn6E3",
+                          "x": 300,
+                          "y": 250,
+                          "name": "npc1",
+                          "width": 18,
+                          "height": 26,
+                          "fill": "#E3C7A0",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "HgsnN",
+                          "x": 328,
+                          "y": 258,
+                          "name": "npc2",
+                          "width": 18,
+                          "height": 24,
+                          "fill": "#DFC2A6",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#7B5B3B"
+                          }
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Arvwk",
+                          "x": 288,
+                          "y": 232,
+                          "name": "npcTag",
+                          "fill": "#D3B48E",
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 1,
+                            "fill": "#7B5B3B"
+                          },
+                          "padding": [
+                            3,
+                            6
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "AYBtv",
+                              "name": "npcTagText",
+                              "fill": "#3D2A19",
+                              "content": "Villagers x2",
+                              "fontFamily": "JetBrains Mono",
+                              "fontSize": 9,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "G2btk",
+      "x": 1480,
+      "y": 0,
+      "name": "Mobile Craft HUD",
+      "width": 390,
+      "height": 844,
+      "fill": "#9ED2FF",
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 16,
+      "children": [
+        {
+          "type": "frame",
+          "id": "nnX3Z",
+          "name": "mobileHeader",
+          "width": "fill_container",
+          "fill": "#7DB25A",
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "#4F6F37"
+          },
+          "layout": "vertical",
+          "gap": 4,
+          "padding": 10,
+          "children": [
+            {
+              "type": "text",
+              "id": "SkshL",
+              "name": "mobileTitle",
+              "fill": "#F8F2D8",
+              "content": "EIDOLON CRAFT",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 20,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "2n20M",
+              "name": "mobileSub",
+              "fill": "#E6F4D5",
+              "content": "VOICE BLOCK ADVENTURE",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kLi0d",
+          "name": "mobileViewport",
+          "width": "fill_container",
+          "height": 300,
+          "fill": "#8EC9FF",
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "#4F6F37"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "9MTTP",
+              "x": 228,
+              "y": 188,
+              "name": "mobileKaiju",
+              "width": 74,
+              "height": 82,
+              "fill": "#6C7A3B",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#3F5A2C"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "64756",
+              "x": 168,
+              "y": 228,
+              "name": "mobileHero",
+              "width": 28,
+              "height": 42,
+              "fill": "#C7E8FF",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#5A422D"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "fTtze",
+              "x": 0,
+              "y": 270,
+              "name": "mobileGround",
+              "width": 358,
+              "height": 30,
+              "fill": "#6E8E4B",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#4F6F37"
+              }
+            },
+            {
+              "type": "frame",
+              "id": "I9yKX",
+              "x": 306,
+              "y": 14,
+              "name": "mobileSun",
+              "width": 24,
+              "height": 24,
+              "fill": "#F5DA5B",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#A58A2E"
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FJxPR",
+          "name": "mobileInfo",
+          "width": "fill_container",
+          "fill": "#D3B48E",
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "#7B5B3B"
+          },
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 10,
+          "children": [
+            {
+              "type": "text",
+              "id": "SDDiF",
+              "name": "mobileInfoText1",
+              "fill": "#3D2A19",
+              "content": "Light 82% / Ripple 0.47 / Resonance 1.34",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "BOXss",
+              "name": "mobileInfoText2",
+              "fill": "#3D2A19",
+              "content": "Auto Kaiju Spawn: ON (90 sec)",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "D59Cn",
+          "name": "mobileVoice",
+          "width": "fill_container",
+          "fill": "#E1C39D",
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "#7B5B3B"
+          },
+          "layout": "vertical",
+          "gap": 8,
+          "padding": 10,
+          "children": [
+            {
+              "type": "text",
+              "id": "Jkor1",
+              "name": "mobileVoiceHead",
+              "fill": "#3D2A19",
+              "content": "音声クラフト",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "i7gFE",
+              "name": "mobileVoiceHint",
+              "fill": "#5A422D",
+              "content": "木の家を建築してモブを出現",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ocJWo",
+          "name": "mobilePatch",
+          "width": "fill_container",
+          "fill": "#E1C39D",
+          "stroke": {
+            "align": "inside",
+            "thickness": 2,
+            "fill": "#7B5B3B"
+          },
+          "layout": "vertical",
+          "gap": 6,
+          "padding": 10,
+          "children": [
+            {
+              "type": "text",
+              "id": "mEYuf",
+              "name": "mobilePatchHead",
+              "fill": "#3D2A19",
+              "content": "Latest Craft JSON",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "caKXg",
+              "name": "mobilePatchLine",
+              "fill": "#5A422D",
+              "content": "{\"action\":\"build\",\"target\":\"house\"}",
+              "fontFamily": "JetBrains Mono",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Ylznx",
+          "name": "mobileActions",
+          "width": "fill_container",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "B3Nde",
+              "name": "mobileBtnA",
+              "width": "fill_container",
+              "fill": "#8B6A4A",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#5A422D"
+              },
+              "padding": [
+                8,
+                10
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "iy3eH",
+                  "name": "mobileBtnAText",
+                  "fill": "#FFEFCF",
+                  "content": "Build",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "H4R0z",
+              "name": "mobileBtnB",
+              "width": "fill_container",
+              "fill": "#6C7A3B",
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#3F5A2C"
+              },
+              "padding": [
+                8,
+                10
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "LqywN",
+                  "name": "mobileBtnBText",
+                  "fill": "#F1FFD8",
+                  "content": "Mob",
+                  "fontFamily": "JetBrains Mono",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
