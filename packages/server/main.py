@@ -117,8 +117,8 @@ async def generate_image(request: GenerateImageRequest) -> dict[str, str]:
     return {"image_base64": image_base64, "mime_type": mime_type}
 
 
-@app.get("/healthz")
-async def health_check() -> dict[str, str]:
+@app.get("/health")
+async def health_check_alias() -> dict[str, str]:
     return {"status": "ok"}
 
 
