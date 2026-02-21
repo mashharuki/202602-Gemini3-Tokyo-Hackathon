@@ -15,7 +15,7 @@
   - _Contracts: FallbackSpriteStoreInterface_
 
 - [ ] 2. Cloud Run サーバーへの画像生成エンドポイント追加
-- [ ] 2.1 既存の FastAPI サーバーに画像生成用 API エンドポイントを追加する
+- [x] 2.1 既存の FastAPI サーバーに画像生成用 API エンドポイントを追加する
   - `packages/server/main.py` に `POST /api/generate-image` エンドポイントを追加する
   - エンティティ種別からピクセルアート向けプロンプトを構築し、Gemini API（Vertex AI 経由）で画像を生成する
   - 生成結果を Base64 形式でレスポンスボディに含めて返却する

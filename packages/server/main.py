@@ -1,28 +1,120 @@
 from __future__ import annotations
 
 import asyncio
+import base64
 import json
 import logging
-from typing import Any, AsyncIterable
+import os
+from typing import Any, AsyncIterable, Optional
 
 try:
-    from fastapi import FastAPI, WebSocket
+    from fastapi import FastAPI, HTTPException, WebSocket
+    from pydantic import BaseModel
 except Exception:  # pragma: no cover
+    class HTTPException(Exception):  # type: ignore[override]
+        def __init__(self, status_code: int, detail: str):
+            super().__init__(detail)
+            self.status_code = status_code
+            self.detail = detail
+
     class WebSocket:  # type: ignore[override]
         pass
 
     class FastAPI:  # type: ignore[override]
+        def get(self, _path: str):
+            def decorator(func):
+                return func
+
+            return decorator
+
+        def post(self, _path: str):
+            def decorator(func):
+                return func
+
+            return decorator
+
         def websocket(self, _path: str):
             def decorator(func):
                 return func
 
             return decorator
 
+    class BaseModel:  # type: ignore[override]
+        pass
+
 
 from agent.world_agent import create_world_agent
 
 logger = logging.getLogger(__name__)
 app = FastAPI()
+
+IMAGE_GENERATION_MODEL = "gemini-2.0-flash-preview-image-generation"
+
+
+class GenerateImageRequest(BaseModel):
+    entity_type: str
+    prompt_hint: Optional[str] = None
+
+
+def build_pixel_art_prompt(entity_type: str, prompt_hint: str | None = None) -> str:
+    base_prompt = (
+        f"Create a clean pixel art sprite of a {entity_type}. "
+        "Transparent background, centered subject, 2D game-ready style, 32x32 look."
+    )
+    if prompt_hint and prompt_hint.strip():
+        return f"{base_prompt} Additional style hint: {prompt_hint.strip()}."
+    return base_prompt
+
+
+async def _generate_image_base64(prompt: str) -> tuple[str, str]:
+    project = os.getenv("GOOGLE_CLOUD_PROJECT")
+    location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+    if not project:
+        raise RuntimeError("GOOGLE_CLOUD_PROJECT is required")
+
+    try:
+        from google import genai  # type: ignore
+    except Exception as exc:  # pragma: no cover
+        raise RuntimeError("google-genai dependency is not installed") from exc
+
+    client = genai.Client(vertexai=True, project=project, location=location)
+    response = client.models.generate_content(model=IMAGE_GENERATION_MODEL, contents=prompt)
+
+    for candidate in getattr(response, "candidates", []) or []:
+        content = getattr(candidate, "content", None)
+        for part in getattr(content, "parts", []) or []:
+            inline_data = getattr(part, "inline_data", None)
+            if inline_data is None:
+                continue
+            data = getattr(inline_data, "data", None)
+            mime_type = getattr(inline_data, "mime_type", "image/png")
+            if not data:
+                continue
+            if isinstance(data, bytes):
+                encoded = base64.b64encode(data).decode("utf-8")
+            else:
+                encoded = str(data)
+            return encoded, str(mime_type or "image/png")
+
+    raise RuntimeError("No image data returned from Gemini")
+
+
+@app.post("/api/generate-image")
+async def generate_image(request: GenerateImageRequest) -> dict[str, str]:
+    entity_type = request.entity_type.strip() if request.entity_type else ""
+    if not entity_type:
+        raise HTTPException(status_code=400, detail="entity_type is required")
+
+    prompt = build_pixel_art_prompt(entity_type, request.prompt_hint)
+    try:
+        image_base64, mime_type = await _generate_image_base64(prompt)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("image generation failed")
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    return {"image_base64": image_base64, "mime_type": mime_type}
 
 
 @app.get("/healthz")
