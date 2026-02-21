@@ -1,6 +1,6 @@
 # Implementation Tasks: feature-threejs-world
 
-- [ ] 1. 開発環境の最終調整と依存関係の検証 (P)
+- [x] 1. 開発環境の最終調整と依存関係の検証 (P)
   - `packages/client/package.json` に必要な依存関係（`@react-three/drei`, `@react-three/postprocessing`, `postprocessing`）が正しく追加されているか確認し、インストールを実行する
   - `vite.config.ts` でカスタムシェーダー（GLSL）を扱うための設定が必要か検証し、適切に構成する
   - _Requirements: 4.2_

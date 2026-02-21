@@ -123,6 +123,9 @@ importers:
       vite:
         specifier: ^4.2.1
         version: 4.5.14(@types/node@20.19.33)
+      vite-plugin-glsl:
+        specifier: ^1.5.2
+        version: 1.5.5(esbuild@0.27.3)(vite@4.5.14(@types/node@20.19.33))
       wait-port:
         specifier: ^1.0.4
         version: 1.1.0
@@ -5635,6 +5638,19 @@ packages:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
       typescript:
+        optional: true
+
+  vite-plugin-glsl@1.5.5:
+    resolution: {integrity: sha512-6NM2P4JkM+1hNSqMhM4eagX03bmhEoTyrOrk68y3Q6KXfdF73QIuCb6BmRZvwLPgXTCOBM3Zc8gL1WxctYnrUQ==}
+    engines: {node: '>= 20.17.0', npm: '>= 10.8.3'}
+    peerDependencies:
+      '@rollup/pluginutils': ^5.x
+      esbuild: '>= 0.25'
+      vite: '>= 3.x'
+    peerDependenciesMeta:
+      '@rollup/pluginutils':
+        optional: true
+      esbuild:
         optional: true
 
   vite@4.5.14:
@@ -13244,6 +13260,12 @@ snapshots:
       - bufferutil
       - utf-8-validate
       - zod
+
+  vite-plugin-glsl@1.5.5(esbuild@0.27.3)(vite@4.5.14(@types/node@20.19.33)):
+    dependencies:
+      vite: 4.5.14(@types/node@20.19.33)
+    optionalDependencies:
+      esbuild: 0.27.3
 
   vite@4.5.14(@types/node@20.19.33):
     dependencies:

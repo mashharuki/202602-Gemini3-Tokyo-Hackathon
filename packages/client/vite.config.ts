@@ -1,8 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import glsl from "vite-plugin-glsl";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    glsl({
+      include: ["**/*.glsl", "**/*.vert", "**/*.frag", "**/*.wgsl"],
+    }),
+  ],
   server: {
     port: 3000,
     proxy: {
