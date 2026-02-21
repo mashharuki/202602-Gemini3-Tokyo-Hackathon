@@ -1,5 +1,12 @@
 # 202602-Gemini3-Tokyo-Hackathon
 
+<p align="center">
+  <img src="./docs/ego_logo.png" width="300" alt="EGO Logo" />
+</p>
+<p align="center">
+  <img src="./docs/ego_background.png" width="800" alt="EGO Background" />
+</p>
+
 **Echo Genesis Online (EGO)**
 
 2026年2月21日開催「Gemini 3 東京ハッカソン」提出リポジトリです。

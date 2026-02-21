@@ -30,5 +30,6 @@
     "**/.git": true,
     "**/.DS_Store": true,
     "**/.yarn/cache": true
-  }
+  },
+  "chat.useAgentSkills": true
 }

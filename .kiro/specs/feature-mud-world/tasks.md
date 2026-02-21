@@ -2,20 +2,20 @@
 
 ## 要件カバレッジ
 
-| 要件 ID | タスク |
-|---|---|
-| 1.1, 1.2, 1.3, 1.4 | Task 1 |
-| 2.1 | Task 3 |
-| 2.2 | Task 2.1 |
-| 2.3 | Task 2.2 |
-| 2.4 | Task 2.3 |
-| 3.1 | Task 4 |
-| 3.2 | Task 4.1 |
-| 4.1 | Task 4.2 |
-| 5.1 | Task 1.1 |
-| 6.1 | Task 2, Task 3.2 |
-| 7 | Task 3.1 |
-| 8 | Task 1.1 |
+| 要件 ID            | タスク           |
+| ------------------ | ---------------- |
+| 1.1, 1.2, 1.3, 1.4 | Task 1           |
+| 2.1                | Task 3           |
+| 2.2                | Task 2.1         |
+| 2.3                | Task 2.2         |
+| 2.4                | Task 2.3         |
+| 3.1                | Task 4           |
+| 3.2                | Task 4.1         |
+| 4.1                | Task 4.2         |
+| 5.1                | Task 1.1         |
+| 6.1                | Task 2, Task 3.2 |
+| 7                  | Task 3.1         |
+| 8                  | Task 1.1         |
 
 ---
 
@@ -36,7 +36,7 @@
 
 ### 1.2 codegen の生成とビルド検証
 
-- [ ] `packages/contracts` ディレクトリで `pnpm mud build` を実行し、以下が生成されることを確認する:
+- [x] `packages/contracts` ディレクトリで `pnpm mud build` を実行し、以下が生成されることを確認する:
   - `src/codegen/tables/WorldEffect.sol`
   - `src/codegen/tables/SpawnRecord.sol`
   - `src/codegen/tables/WorldCaption.sol`
@@ -44,8 +44,8 @@
   - `src/codegen/tables/PatchCounter.sol`
   - `src/codegen/world/IWorldPatchSystem.sol`（Task 2 以降で生成）
   - `src/codegen/index.sol` が全テーブルの import を含むこと
-- [ ] `forge build` がエラーなく完了すること
-- [ ] 既存の `Position.sol` と `IMoveSystem.sol` が破壊されていないこと
+- [x] `forge build` がエラーなく完了すること
+- [x] 既存の `Position.sol` と `IMoveSystem.sol` が破壊されていないこと
 
 ---
 
@@ -56,32 +56,32 @@
 
 ### 2.1 (P) setEffect メソッドの実装とテスト
 
-- [ ] `packages/contracts/src/systems/WorldPatchSystem.sol` を新規作成し、`System` を継承する
-- [ ] `setEffect(bytes32 zoneId, bytes32 effect, bytes3 color, uint8 intensity)` メソッドを実装する:
+- [x] `packages/contracts/src/systems/WorldPatchSystem.sol` を新規作成し、`System` を継承する
+- [x] `setEffect(bytes32 zoneId, bytes32 effect, bytes3 color, uint8 intensity)` メソッドを実装する:
   - `intensity > 100` の場合、`"Intensity must be <= 100"` でリバートする
   - `WorldEffect.set(zoneId, effect, color, intensity)` でテーブルを更新する
-- [ ] `packages/contracts/test/WorldPatchSystemTest.t.sol` を新規作成し、`MudTest` を継承する
-- [ ] テストケース `testSetEffect_updatesWorldEffect` を書き、正常系で WorldEffect が更新されることを検証する
-- [ ] テストケース `testSetEffect_revertsOnHighIntensity` を書き、`intensity = 101` で revert することを検証する
-- [ ] `pnpm mud test` で全テストが通ることを確認する
+- [x] `packages/contracts/test/WorldPatchSystemTest.t.sol` を新規作成し、`MudTest` を継承する
+- [x] テストケース `testSetEffect_updatesWorldEffect` を書き、正常系で WorldEffect が更新されることを検証する
+- [x] テストケース `testSetEffect_revertsOnHighIntensity` を書き、`intensity = 101` で revert することを検証する
+- [x] `pnpm mud test` で全テストが通ることを確認する
 
 ### 2.2 (P) spawnEntity メソッドの実装とテスト
 
-- [ ] `WorldPatchSystem` に `spawnEntity(bytes32 entityType, int32 x, int32 y) returns (bytes32)` メソッドを実装する:
+- [x] `WorldPatchSystem` に `spawnEntity(bytes32 entityType, int32 x, int32 y) returns (bytes32)` メソッドを実装する:
   - `PatchCounter.get()` で現在のカウンタ値を取得し、+1 してセットする
   - `entityId = keccak256(abi.encodePacked(_msgSender(), block.timestamp, counter))` で一意 ID を生成する
   - `SpawnRecord.set(entityId, entityType, x, y, block.timestamp)` でテーブルに書き込む
   - `entityId` を返す
-- [ ] テストケース `testSpawnEntity_uniqueIds` を書き、連続2回の呼び出しで異なる entityId が返ることを検証する
-- [ ] テストケース `testSpawnEntity_setsTimestamp` を書き、`spawnedAt` が `block.timestamp` と一致することを検証する
-- [ ] `pnpm mud test` で全テストが通ることを確認する
+- [x] テストケース `testSpawnEntity_uniqueIds` を書き、連続2回の呼び出しで異なる entityId が返ることを検証する
+- [x] テストケース `testSpawnEntity_setsTimestamp` を書き、`spawnedAt` が `block.timestamp` と一致することを検証する
+- [x] `pnpm mud test` で全テストが通ることを確認する
 
 ### 2.3 (P) setCaption メソッドの実装とテスト
 
-- [ ] `WorldPatchSystem` に `setCaption(bytes32 zoneId, string calldata caption)` メソッドを実装する:
+- [x] `WorldPatchSystem` に `setCaption(bytes32 zoneId, string calldata caption)` メソッドを実装する:
   - `WorldCaption.set(zoneId, caption, block.timestamp)` でテーブルを更新する
-- [ ] テストケース `testSetCaption_updatesWithTimestamp` を書き、caption と updatedAt が正しく設定されることを検証する
-- [ ] `pnpm mud test` で全テストが通ることを確認する
+- [x] テストケース `testSetCaption_updatesWithTimestamp` を書き、caption と updatedAt が正しく設定されることを検証する
+- [x] `pnpm mud test` で全テストが通ることを確認する
 
 ---
 
@@ -92,7 +92,7 @@
 
 ### 3.1 applyWorldPatch 統合メソッドの実装
 
-- [ ] `WorldPatchSystem` に `applyWorldPatch(bytes32 effect, bytes3 color, uint8 intensity, bytes32 spawnType, int32 spawnX, int32 spawnY, string calldata caption)` メソッドを実装する:
+- [x] `WorldPatchSystem` に `applyWorldPatch(bytes32 effect, bytes3 color, uint8 intensity, bytes32 spawnType, int32 spawnX, int32 spawnY, string calldata caption)` メソッドを実装する:
   - `intensity > 100` の場合リバートする
   - `GLOBAL_ZONE = bytes32(0)` を定数として定義する
   - `WorldEffect.set(GLOBAL_ZONE, effect, color, intensity)` を呼び出す
@@ -102,10 +102,10 @@
 
 ### 3.2 統合テストの作成
 
-- [ ] テストケース `testApplyWorldPatch_updatesAllTables` を書き、全フィールド指定時に WorldEffect, SpawnRecord, WorldCaption, WorldPatchLog の4テーブルすべてが更新されることを検証する
-- [ ] テストケース `testApplyWorldPatch_skipsSpawnWhenZeroType` を書き、`spawnType = bytes32(0)` の場合に SpawnRecord が書き込まれないことを検証する
-- [ ] テストケース `testApplyWorldPatch_incrementsCounter` を書き、PatchCounter が呼び出しごとにインクリメントされることを検証する
-- [ ] `pnpm mud test` で全テストが通ることを確認する
+- [x] テストケース `testApplyWorldPatch_updatesAllTables` を書き、全フィールド指定時に WorldEffect, SpawnRecord, WorldCaption, WorldPatchLog の4テーブルすべてが更新されることを検証する
+- [x] テストケース `testApplyWorldPatch_skipsSpawnWhenZeroType` を書き、`spawnType = bytes32(0)` の場合に SpawnRecord が書き込まれないことを検証する
+- [x] テストケース `testApplyWorldPatch_incrementsCounter` を書き、PatchCounter が呼び出しごとにインクリメントされることを検証する
+- [x] `pnpm mud test` で全テストが通ることを確認する
 
 ---
 
@@ -116,24 +116,24 @@
 
 ### 4.1 createSystemCalls.ts に世界パッチ関数を追加
 
-- [ ] `packages/client/src/mud/createSystemCalls.ts` に `WorldPatchJSON` 型を定義する:
+- [x] `packages/client/src/mud/createSystemCalls.ts` に `WorldPatchJSON` 型を定義する:
   ```
   { effect: string, color: string, intensity: number, spawn: { type: string, x: number, y: number } | null, caption: string }
   ```
-- [ ] `applyWorldPatch(patch: WorldPatchJSON)` 関数を追加する:
+- [x] `applyWorldPatch(patch: WorldPatchJSON)` 関数を追加する:
   - 4.2 のバリデーション関数を呼び出し、不正時は Error を throw する
   - `effect` を `stringToHex(effect, { size: 32 })` で `bytes32` に変換する
   - `color` の `"#RRGGBB"` を `"0xRRGGBB"` に変換し `bytes3` として渡す
   - `spawn` が null の場合は `spawnType` に `pad("0x", { size: 32 })` を渡す
   - `worldContract.write.app__applyWorldPatch([...args])` を呼び出し、`waitForTransaction` で確認する
-- [ ] `setEffect(zoneId, effect, color, intensity)` 関数を追加する（個別メソッド呼び出し用）
-- [ ] `spawnEntity(entityType, x, y)` 関数を追加する
-- [ ] `setCaption(zoneId, caption)` 関数を追加する
-- [ ] 戻り値のオブジェクトに `applyWorldPatch`, `setEffect`, `spawnEntity`, `setCaption` を追加する
+- [x] `setEffect(zoneId, effect, color, intensity)` 関数を追加する（個別メソッド呼び出し用）
+- [x] `spawnEntity(entityType, x, y)` 関数を追加する
+- [x] `setCaption(zoneId, caption)` 関数を追加する
+- [x] 戻り値のオブジェクトに `applyWorldPatch`, `setEffect`, `spawnEntity`, `setCaption` を追加する
 
 ### 4.2 バリデーション関数の実装
 
-- [ ] `createSystemCalls.ts` 内にプライベート関数 `validateWorldPatch(patch: WorldPatchJSON)` を実装する:
+- [x] `createSystemCalls.ts` 内にプライベート関数 `validateWorldPatch(patch: WorldPatchJSON)` を実装する:
   - `effect` が空文字でないことを検証する
   - `color` が `/^#[0-9A-Fa-f]{6}$/` にマッチすることを検証する
   - `intensity` が 0 以上 100 以下の整数であることを検証する

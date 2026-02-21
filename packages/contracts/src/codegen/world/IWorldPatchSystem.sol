@@ -14,4 +14,14 @@ interface IWorldPatchSystem {
   function app__spawnEntity(bytes32 entityType, int32 x, int32 y) external returns (bytes32);
 
   function app__setCaption(bytes32 zoneId, string calldata caption) external;
+
+  function app__applyWorldPatch(
+    bytes32 effect,
+    bytes3 color,
+    uint8 intensity,
+    bytes32 spawnType,
+    int32 spawnX,
+    int32 spawnY,
+    string calldata caption
+  ) external;
 }
