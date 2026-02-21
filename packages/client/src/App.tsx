@@ -15,6 +15,7 @@ const cellStyle = { padding: 20 };
 import { WorldScene } from "./world/WorldScene";
 import { MatrixEffects } from "./world/effects/MatrixEffects";
 import { WorldEffectRenderer } from "./world/effects/WorldEffectRenderer";
+import { WorldEffectShaderPasses } from "./world/effects/WorldEffectShaderPasses";
 import { SpawnedEntityRenderer } from "./world/SpawnedEntityRenderer";
 
 const Player = ({ color, position }: { color: number; position: [number, number, number] }) => {
@@ -48,6 +49,7 @@ const Scene = () => {
         <group>
             <WorldScene />
             <WorldEffectRenderer />
+            <WorldEffectShaderPasses />
             <MatrixEffects />
             <SpawnedEntityRenderer />
 

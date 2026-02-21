@@ -1,5 +1,7 @@
 import { Bloom, EffectComposer, Noise, Scanline, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
+import { useWorldEffects } from "../../hooks/useWorldEffects";
+import { computeMatrixComposerState, prioritizeActiveEffects } from "./effectCompositor";
 
 export const matrixEffectsConfig = {
   bloom: {
@@ -28,18 +30,22 @@ export const matrixEffectsConfig = {
 };
 
 export const MatrixEffects = () => {
+  const activeEffects = useWorldEffects();
+  const prioritizedEffects = prioritizeActiveEffects(activeEffects, 6);
+  const composerState = computeMatrixComposerState(prioritizedEffects);
+
   return (
     <EffectComposer enableNormalPass={false}>
       <Bloom
-        intensity={matrixEffectsConfig.bloom.intensity}
-        luminanceThreshold={matrixEffectsConfig.bloom.luminanceThreshold}
-        luminanceSmoothing={matrixEffectsConfig.bloom.luminanceSmoothing}
+        intensity={composerState.bloomIntensity}
+        luminanceThreshold={composerState.bloomThreshold}
+        luminanceSmoothing={composerState.bloomSmoothing}
         mipmapBlur={matrixEffectsConfig.bloom.mipmapBlur}
       />
       <Scanline
-        blendFunction={matrixEffectsConfig.scanline.blendFunction}
-        density={matrixEffectsConfig.scanline.density}
-        opacity={matrixEffectsConfig.scanline.opacity}
+        blendFunction={composerState.scanlineBlendFunction}
+        density={composerState.scanlineDensity}
+        opacity={composerState.scanlineOpacity}
       />
       <Noise
         opacity={matrixEffectsConfig.noise.opacity}
