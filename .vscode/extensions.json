@@ -5,6 +5,9 @@
     "NomicFoundation.hardhat-solidity",
     "bradlc.vscode-tailwindcss",
     "arcanis.vscode-zipfs",
-    "editorconfig.editorconfig"
+    "editorconfig.editorconfig",
+    "NomicFoundation.hardhat-solidity",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode"
   ]
 }
