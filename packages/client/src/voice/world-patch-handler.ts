@@ -1,12 +1,87 @@
-import type { DownstreamMessage, WorldPatchJSON } from "./types";
+import type { AdkEventPart, AdkEventPayload, DownstreamMessage, WorldPatchJSON } from "./types";
 
 type ValidationResult = {
   valid: boolean;
   errors: string[];
 };
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null;
+const isObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+
+const toOptionalString = (value: unknown): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  return value;
+};
+
+const normalizeAdkPart = (rawPart: unknown): AdkEventPart | null => {
+  if (!isObject(rawPart)) return null;
+
+  const text = toOptionalString(rawPart.text);
+  const inlineSource =
+    (isObject(rawPart.inlineData) && rawPart.inlineData) ||
+    (isObject(rawPart.inline_data) && rawPart.inline_data) ||
+    null;
+
+  const mimeType = inlineSource ? toOptionalString(inlineSource.mimeType ?? inlineSource.mime_type) : undefined;
+  const data = inlineSource ? toOptionalString(inlineSource.data) : undefined;
+
+  const normalized: AdkEventPart = {};
+  if (text) normalized.text = text;
+  if (mimeType || data) {
+    normalized.inlineData = {
+      mimeType,
+      data,
+    };
+  }
+
+  if (!normalized.text && !normalized.inlineData) return null;
+  return normalized;
+};
+
+const normalizeAdkPayload = (rawPayload: unknown): AdkEventPayload => {
+  const payload = isObject(rawPayload) ? rawPayload : {};
+
+  const contentObj = isObject(payload.content) ? payload.content : null;
+  const rawParts = Array.isArray(contentObj?.parts) ? contentObj.parts : [];
+  const parts = rawParts.map(normalizeAdkPart).filter((part): part is AdkEventPart => part !== null);
+
+  const outputTranscriptionObj =
+    (isObject(payload.outputTranscription) && payload.outputTranscription) ||
+    (isObject(payload.output_transcription) && payload.output_transcription) ||
+    null;
+  const inputTranscriptionObj =
+    (isObject(payload.inputTranscription) && payload.inputTranscription) ||
+    (isObject(payload.input_transcription) && payload.input_transcription) ||
+    null;
+
+  const outputText = toOptionalString(outputTranscriptionObj?.text);
+  const inputText = toOptionalString(inputTranscriptionObj?.text);
+
+  if (outputText && !parts.some((part) => typeof part.text === "string" && part.text.trim() === outputText.trim())) {
+    parts.push({ text: outputText });
+  }
+
+  const normalized: AdkEventPayload = {
+    author: toOptionalString(payload.author),
+    turnComplete:
+      typeof payload.turnComplete === "boolean"
+        ? payload.turnComplete
+        : typeof payload.turn_complete === "boolean"
+          ? payload.turn_complete
+          : typeof payload.finished === "boolean"
+            ? payload.finished
+            : undefined,
+    interrupted: typeof payload.interrupted === "boolean" ? payload.interrupted : undefined,
+    content: { parts },
+    inputTranscription: inputText ? { text: inputText } : undefined,
+    outputTranscription: outputText ? { text: outputText } : undefined,
+    error:
+      typeof payload.error === "string" || isObject(payload.error)
+        ? (payload.error as string | { message?: string })
+        : undefined,
+  };
+
+  return normalized;
+};
 
 export const validateWorldPatch = (patch: WorldPatchJSON): ValidationResult => {
   const errors: string[] = [];
@@ -40,62 +115,31 @@ export const validateWorldPatch = (patch: WorldPatchJSON): ValidationResult => {
 
 const isWorldPatchJSON = (value: unknown): value is WorldPatchJSON => {
   if (!isObject(value)) return false;
-  return (
-    "effect" in value &&
-    "color" in value &&
-    "intensity" in value &&
-    "spawn" in value &&
-    "caption" in value
-  );
-};
-
-const extractPatchFromText = (text: string): WorldPatchJSON | null => {
-  const fencedMatch = text.match(/```json\s*([\s\S]*?)\s*```/i);
-  const candidates = [fencedMatch?.[1], text];
-
-  for (const candidate of candidates) {
-    if (!candidate) continue;
-    try {
-      const parsed = JSON.parse(candidate);
-      if (isWorldPatchJSON(parsed)) {
-        return parsed;
-      }
-    } catch {
-      // continue next candidate
-    }
-  }
-
-  return null;
+  return "effect" in value && "color" in value && "intensity" in value && "spawn" in value && "caption" in value;
 };
 
 export const handleDownstreamMessage = (messageText: string): DownstreamMessage => {
-  let payload: unknown;
+  let rawMessage: unknown;
   try {
-    payload = JSON.parse(messageText);
+    rawMessage = JSON.parse(messageText);
   } catch {
     return { type: "error", message: "Invalid downstream JSON" };
   }
 
-  if (!isObject(payload)) {
+  if (!isObject(rawMessage)) {
     return { type: "error", message: "Invalid downstream payload" };
   }
 
-  if (payload.type === "worldPatch" && isWorldPatchJSON(payload.patch)) {
-    return { type: "worldPatch", patch: payload.patch };
+  if (rawMessage.type === "worldPatch" && isWorldPatchJSON(rawMessage.patch)) {
+    return { type: "worldPatch", patch: rawMessage.patch };
   }
 
-  const content = payload.content;
-  if (isObject(content) && Array.isArray(content.parts)) {
-    for (const part of content.parts) {
-      if (!isObject(part) || typeof part.text !== "string") continue;
-      const patch = extractPatchFromText(part.text);
-      if (patch) {
-        return { type: "worldPatch", patch };
-      }
-    }
-  }
+  const adkPayload =
+    rawMessage.type === "adkEvent" && isObject(rawMessage.payload)
+      ? normalizeAdkPayload(rawMessage.payload)
+      : normalizeAdkPayload(rawMessage);
 
-  return { type: "adkEvent", payload };
+  return { type: "adkEvent", payload: adkPayload };
 };
 
 export const applyWorldPatchFromAgent = async (
@@ -113,4 +157,3 @@ export const applyWorldPatchFromAgent = async (
   await systemCalls.applyWorldPatch(patch);
   return { ok: true };
 };
-

@@ -1,4 +1,5 @@
 import { Environment, Grid, OrbitControls, Sky } from "@react-three/drei";
+import { Buildings } from "./Buildings";
 
 export const matrixWorldSceneConfig = {
   controls: {
@@ -8,12 +9,12 @@ export const matrixWorldSceneConfig = {
     maxPolarAngle: Math.PI / 2.1,
   },
   environmentPreset: "city" as const,
-  ambientLightIntensity: 0.05,
+  ambientLightIntensity: 0.1, // Slightly increased for building visibility
   keyLight: {
     position: [20, 30, 10] as [number, number, number],
-    intensity: 2.5,
+    intensity: 3.5, // Brighter for city shadows
     color: "#00ff41",
-    distance: 100,
+    distance: 120,
   },
   grid: {
     sectionSize: 10,
@@ -26,7 +27,7 @@ export const matrixWorldSceneConfig = {
     fadeStrength: 5,
   },
   basePlane: {
-    size: [200, 200] as [number, number],
+    size: [400, 400] as [number, number], // Larger for the city
     color: "#050505",
     metalness: 0.9,
     roughness: 0.1,
@@ -45,6 +46,10 @@ export const WorldScene = () => {
         maxPolarAngle={matrixWorldSceneConfig.controls.maxPolarAngle}
       />
 
+      {/* Atmospheric Fog */}
+      <color attach="background" args={["#000000"]} />
+      <fog attach="fog" args={["#000000", 30, 150]} />
+
       <Environment preset={matrixWorldSceneConfig.environmentPreset} />
       <Sky sunPosition={[0, -1, 0]} />
       <ambientLight intensity={matrixWorldSceneConfig.ambientLightIntensity} />
@@ -53,6 +58,8 @@ export const WorldScene = () => {
         intensity={matrixWorldSceneConfig.keyLight.intensity}
         color={matrixWorldSceneConfig.keyLight.color}
       />
+
+      <Buildings />
 
       <Grid
         infiniteGrid

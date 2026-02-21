@@ -27,7 +27,9 @@ const createDeps = () => {
   const processor = {
     connectedTo: null as unknown,
     disconnected: false,
-    onaudioprocess: undefined as ((event: { inputBuffer: { getChannelData: (_index: number) => Float32Array } }) => void) | undefined,
+    onaudioprocess: undefined as
+      | ((event: { inputBuffer: { getChannelData: (_index: number) => Float32Array } }) => void)
+      | undefined,
     connect(target: unknown) {
       this.connectedTo = target;
     },
@@ -64,6 +66,72 @@ const createDeps = () => {
   return { deps, track, source, processor, context };
 };
 
+const createWorkletDeps = () => {
+  const track = {
+    stopped: false,
+    stop() {
+      this.stopped = true;
+    },
+  };
+
+  const stream = {
+    getTracks: () => [track],
+  } as unknown as MediaStream;
+
+  const source = {
+    connectedTo: null as unknown,
+    disconnected: false,
+    connect(target: unknown) {
+      this.connectedTo = target;
+    },
+    disconnect() {
+      this.disconnected = true;
+    },
+  };
+
+  const scriptProcessor = {
+    connect() {
+      throw new Error("script fallback should not be used");
+    },
+  };
+
+  const workletNode = {
+    connectedTo: null as unknown,
+    disconnected: false,
+    port: {
+      onmessage: null as ((event: MessageEvent<Float32Array>) => void) | null,
+    },
+    connect(target: unknown) {
+      this.connectedTo = target;
+    },
+    disconnect() {
+      this.disconnected = true;
+    },
+  };
+
+  const context = {
+    destination: {},
+    closed: false,
+    createMediaStreamSource: () => source,
+    createScriptProcessor: () => scriptProcessor,
+    audioWorklet: {
+      addModule: async () => undefined,
+    },
+    async close() {
+      this.closed = true;
+    },
+  };
+
+  const deps: AudioCaptureDependencies = {
+    getUserMedia: async () => stream,
+    createAudioContext: () => context as unknown as AudioContext,
+    createAudioWorkletNode: () => workletNode as unknown as AudioWorkletNode,
+    pcmConverter: (input) => Int16Array.from(input.map((value) => Math.round(value * 100))),
+  };
+
+  return { deps, track, source, workletNode, context };
+};
+
 describe("startAudioCapture", () => {
   it("initializes capture pipeline and emits PCM chunks", async () => {
     const { deps, processor } = createDeps();
@@ -92,5 +160,18 @@ describe("stopAudioCapture", () => {
     expect(source.disconnected).toBeTrue();
     expect(processor.disconnected).toBeTrue();
     expect(context.closed).toBeTrue();
+  });
+
+  it("uses AudioWorkletNode when available", async () => {
+    const { deps, source, workletNode } = createWorkletDeps();
+    const chunks: Int16Array[] = [];
+
+    const handle = await startAudioCapture((chunk) => chunks.push(chunk), deps);
+    expect(handle.processor).toBe(workletNode as unknown as AudioWorkletNode);
+    expect(source.connectedTo).toBe(workletNode as unknown as AudioWorkletNode);
+    expect(workletNode.connectedTo).toBeDefined();
+
+    workletNode.port.onmessage?.({ data: new Float32Array([0.01, -0.02]) } as MessageEvent<Float32Array>);
+    expect(Array.from(chunks[0])).toEqual([1, -2]);
   });
 });

@@ -36,6 +36,15 @@ type MatrixEffectsProps = {
 };
 
 export const MatrixEffects = ({ activeEffects, tierState }: MatrixEffectsProps) => {
+  if (!Array.isArray(activeEffects) || !tierState?.enabledPasses) {
+    return null;
+  }
+
+  const hasAnyEnabledPass = Object.values(tierState.enabledPasses).some(Boolean);
+  if (!hasAnyEnabledPass) {
+    return null;
+  }
+
   const prioritizedEffects = prioritizeActiveEffects(activeEffects, tierState.maxActiveEffects);
   const composerState = computeMatrixComposerState(prioritizedEffects);
 

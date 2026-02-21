@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { createVoiceAgentController } from "./voice-agent-controller";
 import type { WorldPatchJSON } from "./types";
+import { createVoiceAgentController } from "./voice-agent-controller";
 
 const createHarness = () => {
   const sentBinary: ArrayBuffer[] = [];
@@ -12,10 +12,7 @@ const createHarness = () => {
   let onMessage: ((text: string) => void) | null = null;
 
   const wsManager = {
-    setHandlers: (handlers: {
-      onStateChange?: (next: typeof state) => void;
-      onMessage?: (text: string) => void;
-    }) => {
+    setHandlers: (handlers: { onStateChange?: (next: typeof state) => void; onMessage?: (text: string) => void }) => {
       onStateChange = handlers.onStateChange ?? null;
       onMessage = handlers.onMessage ?? null;
     },
@@ -97,12 +94,36 @@ describe("createVoiceAgentController", () => {
 
   it("toggleVoice starts and stops capture and sends PCM binary", async () => {
     const h = createHarness();
+    h.controller.connect();
     await h.controller.toggleVoice();
     expect(h.isCaptureActive()).toBeTrue();
     expect(h.sentBinary.length).toBe(1);
     expect(h.controller.getState().isVoiceActive).toBeTrue();
 
     await h.controller.toggleVoice();
+    expect(h.isCaptureActive()).toBeFalse();
+    expect(h.controller.getState().isVoiceActive).toBeFalse();
+  });
+
+  it("does not start voice capture while disconnected", async () => {
+    const h = createHarness();
+    await h.controller.toggleVoice();
+
+    expect(h.isCaptureActive()).toBeFalse();
+    expect(h.sentBinary.length).toBe(0);
+    expect(h.controller.getState().isVoiceActive).toBeFalse();
+    expect(h.controller.getState().conversation.at(-1)?.role).toBe("system");
+  });
+
+  it("auto stops voice capture when connection is lost", async () => {
+    const h = createHarness();
+    h.controller.connect();
+    await h.controller.toggleVoice();
+    expect(h.isCaptureActive()).toBeTrue();
+
+    h.controller.disconnect();
+    await Promise.resolve();
+
     expect(h.isCaptureActive()).toBeFalse();
     expect(h.controller.getState().isVoiceActive).toBeFalse();
   });
@@ -133,10 +154,7 @@ describe("createVoiceAgentController", () => {
       JSON.stringify({
         turnComplete: true,
         content: {
-          parts: [
-            { text: "agent says hi" },
-            { inlineData: { mimeType: "audio/pcm;rate=24000", data: "AQACAA==" } },
-          ],
+          parts: [{ text: "agent says hi" }, { inlineData: { mimeType: "audio/pcm;rate=24000", data: "AQACAA==" } }],
         },
       }),
     );

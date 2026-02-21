@@ -20,10 +20,39 @@ type RawWorldEffectEntry = {
 
 const EFFECT_SET = new Set<WorldEffectData["effect"]>(["ripple", "resonance", "neon", "scanline"]);
 
+const EFFECT_ALIASES: Record<string, WorldEffectData["effect"]> = {
+  aurora: "neon",
+  storm: "ripple",
+  wave: "ripple",
+  pulse: "resonance",
+  glitch: "scanline",
+};
+
+const decodeHexAscii = (value: string): string => {
+  if (!/^0x[0-9a-fA-F]+$/.test(value) || value.length % 2 !== 0) {
+    return value;
+  }
+
+  let decoded = "";
+  for (let i = 2; i < value.length; i += 2) {
+    const code = parseInt(value.slice(i, i + 2), 16);
+    if (Number.isNaN(code)) continue;
+    if (code === 0) break;
+    decoded += String.fromCharCode(code);
+  }
+
+  return decoded || value;
+};
+
 const normalizeEffect = (value: unknown): WorldEffectData["effect"] | null => {
   if (typeof value !== "string") return null;
-  const normalized = value.replace(/^0x/i, "").toLowerCase().replace(/\0/g, "").trim();
+  const decoded = decodeHexAscii(value);
+  const normalized = decoded.replace(/^0x/i, "").toLowerCase().replace(/\0/g, "").trim();
   if (EFFECT_SET.has(normalized as WorldEffectData["effect"])) return normalized as WorldEffectData["effect"];
+
+  const alias = EFFECT_ALIASES[normalized];
+  if (alias) return alias;
+
   return null;
 };
 
@@ -73,7 +102,8 @@ export const sanitizeWorldEffects = (
 
   for (const entry of entries) {
     const fallback = previousByZone.get(entry.zoneId);
-    const raw = typeof entry.value === "object" && entry.value !== null ? (entry.value as Record<string, unknown>) : null;
+    const raw =
+      typeof entry.value === "object" && entry.value !== null ? (entry.value as Record<string, unknown>) : null;
     if (!raw) {
       if (fallback) result.push(fallback);
       continue;

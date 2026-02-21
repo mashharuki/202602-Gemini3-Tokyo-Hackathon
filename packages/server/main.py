@@ -231,15 +231,31 @@ def _build_text_payload(text: str) -> Any:
     return text
 
 
+def _make_json_safe(value: Any) -> Any:
+    if isinstance(value, bytes):
+        return base64.b64encode(value).decode("utf-8")
+    if isinstance(value, bytearray):
+        return base64.b64encode(bytes(value)).decode("utf-8")
+    if isinstance(value, memoryview):
+        return base64.b64encode(value.tobytes()).decode("utf-8")
+    if isinstance(value, dict):
+        return {str(key): _make_json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_make_json_safe(item) for item in value]
+    return value
+
+
 def _normalize_event(event: Any) -> dict[str, Any]:
     if isinstance(event, dict):
-        return event
+        safe_event = _make_json_safe(event)
+        return safe_event if isinstance(safe_event, dict) else {}
 
     model_dump = getattr(event, "model_dump", None)
     if callable(model_dump):
         dumped = model_dump(by_alias=True, exclude_none=True)
         if isinstance(dumped, dict):
-            return dumped
+            safe_dumped = _make_json_safe(dumped)
+            return safe_dumped if isinstance(safe_dumped, dict) else {}
 
     model_dump_json = getattr(event, "model_dump_json", None)
     if callable(model_dump_json):
@@ -248,18 +264,46 @@ def _normalize_event(event: Any) -> dict[str, Any]:
             if isinstance(dumped_json, str):
                 parsed = json.loads(dumped_json)
                 if isinstance(parsed, dict):
-                    return parsed
+                    safe_parsed = _make_json_safe(parsed)
+                    return safe_parsed if isinstance(safe_parsed, dict) else {}
         except Exception:
             pass
 
     return {}
 
 
-def extract_world_patch(event: dict[str, Any]) -> dict[str, Any] | None:
-    tool_response = event.get("toolResponse")
-    if isinstance(tool_response, dict) and isinstance(tool_response.get("patch"), dict):
-        return tool_response["patch"]
+def _is_world_patch(candidate: Any) -> bool:
+    if not isinstance(candidate, dict):
+        return False
+    return all(key in candidate for key in ("effect", "color", "intensity", "spawn", "caption"))
+
+
+def _find_world_patch(candidate: Any) -> dict[str, Any] | None:
+    if isinstance(candidate, dict):
+        if _is_world_patch(candidate):
+            return candidate
+
+        patch_value = candidate.get("patch")
+        if _is_world_patch(patch_value):
+            return patch_value
+
+        for value in candidate.values():
+            found = _find_world_patch(value)
+            if found is not None:
+                return found
+        return None
+
+    if isinstance(candidate, list):
+        for item in candidate:
+            found = _find_world_patch(item)
+            if found is not None:
+                return found
+
     return None
+
+
+def extract_world_patch(event: dict[str, Any]) -> dict[str, Any] | None:
+    return _find_world_patch(event)
 
 
 async def _ensure_session(session_service: Any, user_id: str, session_id: str) -> None:

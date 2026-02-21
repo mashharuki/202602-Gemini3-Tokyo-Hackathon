@@ -1,10 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import {
-  applyWorldPatchFromAgent,
-  handleDownstreamMessage,
-  validateWorldPatch,
-} from "./world-patch-handler";
 import type { WorldPatchJSON } from "./types";
+import { applyWorldPatchFromAgent, handleDownstreamMessage, validateWorldPatch } from "./world-patch-handler";
 
 describe("handleDownstreamMessage", () => {
   it("parses explicit worldPatch message", () => {
@@ -26,7 +22,7 @@ describe("handleDownstreamMessage", () => {
     }
   });
 
-  it("extracts world patch JSON block from adk text response", () => {
+  it("keeps adk text response as chat payload even when it includes JSON block", () => {
     const adkEvent = JSON.stringify({
       turnComplete: true,
       content: {
@@ -42,10 +38,42 @@ describe("handleDownstreamMessage", () => {
     });
 
     const parsed = handleDownstreamMessage(adkEvent);
-    expect(parsed.type).toBe("worldPatch");
-    if (parsed.type === "worldPatch") {
-      expect(parsed.patch.spawn?.type).toBe("wolf");
-      expect(parsed.patch.intensity).toBe(55);
+    expect(parsed.type).toBe("adkEvent");
+    if (parsed.type === "adkEvent") {
+      const joinedText = (parsed.payload.content?.parts ?? [])
+        .map((part) => part.text)
+        .filter((value): value is string => typeof value === "string")
+        .join("\n");
+      expect(joinedText).toContain("storm incoming");
+    }
+  });
+
+  it("parses wrapped adkEvent payload and preserves text/audio parts", () => {
+    const wrappedEvent = JSON.stringify({
+      type: "adkEvent",
+      payload: {
+        finished: true,
+        content: {
+          parts: [
+            { text: "こんにちは" },
+            {
+              inline_data: {
+                mime_type: "audio/pcm;rate=24000",
+                data: "AQACAA==",
+              },
+            },
+          ],
+        },
+      },
+    });
+
+    const parsed = handleDownstreamMessage(wrappedEvent);
+    expect(parsed.type).toBe("adkEvent");
+    if (parsed.type === "adkEvent") {
+      expect(parsed.payload.turnComplete).toBeTrue();
+      expect(parsed.payload.content?.parts?.[0]?.text).toBe("こんにちは");
+      expect(parsed.payload.content?.parts?.[1]?.inlineData?.mimeType).toBe("audio/pcm;rate=24000");
+      expect(parsed.payload.content?.parts?.[1]?.inlineData?.data).toBe("AQACAA==");
     }
   });
 
@@ -58,6 +86,35 @@ describe("handleDownstreamMessage", () => {
 
     const parsed = handleDownstreamMessage(normalEvent);
     expect(parsed.type).toBe("adkEvent");
+  });
+
+  it("adds output transcription text when payload contains only audio parts", () => {
+    const event = JSON.stringify({
+      type: "adkEvent",
+      payload: {
+        content: {
+          parts: [
+            {
+              inlineData: {
+                mimeType: "audio/pcm;rate=24000",
+                data: "AQACAA==",
+              },
+            },
+          ],
+        },
+        output_transcription: {
+          text: "音声の文字起こしです",
+        },
+      },
+    });
+
+    const parsed = handleDownstreamMessage(event);
+    expect(parsed.type).toBe("adkEvent");
+    if (parsed.type === "adkEvent") {
+      const textParts = parsed.payload.content?.parts?.filter((part) => typeof part.text === "string") ?? [];
+      expect(textParts.length).toBe(1);
+      expect(textParts[0]?.text).toBe("音声の文字起こしです");
+    }
   });
 });
 

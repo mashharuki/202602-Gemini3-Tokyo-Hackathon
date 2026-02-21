@@ -206,6 +206,19 @@ const VoiceCircle = styled.button<{ $active: boolean }>`
     box-shadow: 0 0 25px ${(props) => (props.$active ? "rgba(255, 0, 60, 0.4)" : "rgba(0, 255, 65, 0.3)")};
   }
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  &:disabled:hover {
+    transform: none;
+    background: ${(props) => (props.$active ? "rgba(255, 0, 60, 0.1)" : "rgba(0, 255, 65, 0.05)")};
+    box-shadow: none;
+  }
+
   svg {
     width: 24px;
     height: 24px;
@@ -298,7 +311,11 @@ export const VoiceAgentPanelView = ({
       <ControlSection>
         <StatusIndicator $state={connectionState}>{getConnectionStateLabel(connectionState)}</StatusIndicator>
 
-        <VoiceCircle $active={isVoiceActive} onClick={() => void onToggleVoice()}>
+        <VoiceCircle
+          $active={isVoiceActive}
+          onClick={() => void onToggleVoice()}
+          disabled={connectionState !== "connected" && !isVoiceActive}
+        >
           {isVoiceActive ? (
             <>
               <svg viewBox="0 0 24 24" fill="currentColor">

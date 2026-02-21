@@ -16,9 +16,12 @@ export type UseVoiceAgentOptions = {
 };
 
 export const useVoiceAgent = (systemCalls: SystemCalls, options: UseVoiceAgentOptions = {}): VoiceAgentState => {
-  const host = options.host ?? import.meta.env.VITE_BACKEND_URL ?? window.location.host;
-  const userId = options.userId ?? "guest";
-  const sessionId = options.sessionId ?? `session-${Math.random().toString(36).slice(2, 10)}`;
+  const host = useMemo(() => options.host ?? import.meta.env.VITE_BACKEND_URL ?? window.location.host, [options.host]);
+  const userId = useMemo(() => options.userId ?? "guest", [options.userId]);
+  const sessionId = useMemo(
+    () => options.sessionId ?? `session-${Math.random().toString(36).slice(2, 10)}`,
+    [options.sessionId],
+  );
 
   const controller = useMemo(
     () =>

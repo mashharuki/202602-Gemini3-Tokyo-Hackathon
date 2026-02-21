@@ -54,4 +54,56 @@ describe("sanitizeWorldEffects", () => {
 
     expect(next).toEqual(previousState);
   });
+
+  it("decodes bytes32-like effect names and keeps rendering", () => {
+    const next = sanitizeWorldEffects(
+      [
+        {
+          zoneId: "zone-b",
+          value: {
+            effect: "0x726970706c650000000000000000000000000000000000000000000000000000",
+            color: "#44cc88",
+            intensity: 60,
+            x: 3,
+            y: 9,
+          },
+        },
+      ],
+      previousState,
+    );
+
+    expect(next).toEqual([
+      {
+        zoneId: "zone-b",
+        effect: "ripple",
+        color: "#44cc88",
+        intensity: 60,
+        x: 3,
+        y: 9,
+      },
+    ]);
+  });
+
+  it("maps unsupported effect names to nearest built-in effect", () => {
+    const next = sanitizeWorldEffects(
+      [
+        {
+          zoneId: "zone-c",
+          value: { effect: "aurora", color: "#66aaee", intensity: 80, x: 0, y: 0 },
+        },
+      ],
+      previousState,
+    );
+
+    expect(next).toEqual([
+      {
+        zoneId: "zone-c",
+        effect: "neon",
+        color: "#66aaee",
+        intensity: 80,
+        x: 0,
+        y: 0,
+      },
+    ]);
+  });
 });

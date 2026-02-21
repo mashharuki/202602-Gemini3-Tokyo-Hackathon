@@ -7,8 +7,8 @@ SERVER_DIR = ROOT
 if str(SERVER_DIR) not in sys.path:
     sys.path.insert(0, str(SERVER_DIR))
 
-from main import (build_run_config, handle_voice_session, health_check, process_downstream_events,  # type: ignore  # noqa: E402
-                  process_upstream_messages)
+from main import (_normalize_event, build_run_config, handle_voice_session, health_check,  # type: ignore  # noqa: E402
+                  process_downstream_events, process_upstream_messages)
 
 
 class FakeLiveQueue:
@@ -74,6 +74,23 @@ class FakeRunner:
 
 
 class Task22Tests(unittest.IsolatedAsyncioTestCase):
+    def test_normalize_event_converts_bytes_to_base64(self):
+        event = {
+            "content": {
+                "parts": [
+                    {
+                        "inlineData": {
+                            "mimeType": "audio/pcm;rate=24000",
+                            "data": b"\x01\x02\x03",
+                        }
+                    }
+                ]
+            }
+        }
+        normalized = _normalize_event(event)
+        encoded = normalized["content"]["parts"][0]["inlineData"]["data"]
+        self.assertEqual(encoded, "AQID")
+
     async def test_health_check_returns_ok_status(self):
         payload = await health_check()
         self.assertEqual(payload, {"status": "ok"})
@@ -113,6 +130,36 @@ class Task22Tests(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(ws.sent_json[0]["turnComplete"])
         self.assertEqual(ws.sent_json[1]["type"], "worldPatch")
         self.assertEqual(ws.sent_json[1]["patch"]["effect"], "aurora")
+
+    async def test_downstream_extracts_worldpatch_from_nested_actions(self):
+        ws = FakeWebSocket([])
+        event = {
+            "author": "ego_world_agent",
+            "actions": [
+                {
+                    "functionResponse": {
+                        "name": "apply_world_patch",
+                        "response": {
+                            "status": "applied",
+                            "patch": {
+                                "effect": "neon",
+                                "color": "#00FF99",
+                                "intensity": 64,
+                                "spawn": {"type": "robot", "x": 3, "y": 4},
+                                "caption": "ネオンが走る",
+                            },
+                        },
+                    }
+                }
+            ],
+        }
+        runner = FakeRunner([event])
+        await process_downstream_events(ws, runner.run_live())
+
+        self.assertEqual(ws.sent_json[0]["type"], "adkEvent")
+        self.assertEqual(ws.sent_json[1]["type"], "worldPatch")
+        self.assertEqual(ws.sent_json[1]["patch"]["effect"], "neon")
+        self.assertEqual(ws.sent_json[1]["patch"]["spawn"]["type"], "robot")
 
     async def test_handle_voice_session_creates_session_and_sends_error_payload(self):
         queue = FakeLiveQueue()

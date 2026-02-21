@@ -1,9 +1,4 @@
-export type ConnectionState =
-  | "disconnected"
-  | "connecting"
-  | "connected"
-  | "reconnecting"
-  | "error";
+export type ConnectionState = "disconnected" | "connecting" | "connected" | "reconnecting" | "error";
 
 export interface WorldPatchJSON {
   effect: string;
@@ -31,6 +26,9 @@ export interface AdkEventPayload {
   interrupted?: boolean;
   content?: {
     parts?: AdkEventPart[];
+  };
+  inputTranscription?: {
+    text?: string;
   };
   outputTranscription?: {
     text?: string;
@@ -62,4 +60,3 @@ export interface AudioPlaybackHandle {
   nextPlayAt: number;
   activeNodes: Set<AudioBufferSourceNode>;
 }
-

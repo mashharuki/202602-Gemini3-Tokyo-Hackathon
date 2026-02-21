@@ -1,4 +1,4 @@
-import type { SystemCalls } from "../mud/createSystemCalls";
+import { startAudioCapture, stopAudioCapture, type AudioCaptureDependencies } from "../audio/capture";
 import {
   createAudioPlayback,
   interruptPlayback,
@@ -6,17 +6,10 @@ import {
   stopPlayback,
   type AudioPlaybackDependencies,
 } from "../audio/playback";
-import {
-  startAudioCapture,
-  stopAudioCapture,
-  type AudioCaptureDependencies,
-} from "../audio/capture";
-import {
-  createWebSocketManager,
-  type WebSocketManager,
-} from "../connection/websocket-manager";
-import { applyWorldPatchFromAgent, handleDownstreamMessage } from "./world-patch-handler";
+import { createWebSocketManager, type WebSocketManager } from "../connection/websocket-manager";
+import type { SystemCalls } from "../mud/createSystemCalls";
 import type { AudioCaptureHandle, AudioPlaybackHandle, ConnectionState, ConversationMessage } from "./types";
+import { applyWorldPatchFromAgent, handleDownstreamMessage } from "./world-patch-handler";
 
 type PatchResult = { success: boolean; error?: string };
 
@@ -54,7 +47,25 @@ export type VoiceAgentController = {
   subscribe: (listener: (state: VoiceAgentControllerState) => void) => () => void;
 };
 
+const isVoiceDebugEnabled = (): boolean => {
+  if (import.meta.env.DEV) return true;
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem("VOICE_DEBUG") === "1";
+};
+
 export const createVoiceAgentController = (deps: VoiceAgentControllerDeps): VoiceAgentController => {
+  const debug = (...args: unknown[]) => {
+    if (isVoiceDebugEnabled()) {
+      console.log("[VoiceAgentDebug]", ...args);
+    }
+  };
+
+  const debugError = (...args: unknown[]) => {
+    if (isVoiceDebugEnabled()) {
+      console.error("[VoiceAgentDebug]", ...args);
+    }
+  };
+
   const wsManager = (deps.createWebSocketManager ?? createWebSocketManager)();
   const playbackHandle = (deps.createAudioPlayback ?? createAudioPlayback)();
 
@@ -63,9 +74,7 @@ export const createVoiceAgentController = (deps: VoiceAgentControllerDeps): Voic
   const doPlayPcm = deps.playPcmChunk ?? playPcmChunk;
   const doInterruptPlayback = deps.interruptPlayback ?? interruptPlayback;
   const doStopPlayback = deps.stopPlayback ?? stopPlayback;
-  const createMessageId =
-    deps.createMessageId ??
-    (() => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`);
+  const createMessageId = deps.createMessageId ?? (() => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`);
 
   let captureHandle: AudioCaptureHandle | null = null;
   let listeners: Array<(state: VoiceAgentControllerState) => void> = [];
@@ -106,6 +115,19 @@ export const createVoiceAgentController = (deps: VoiceAgentControllerDeps): Voic
     }));
   };
 
+  const stopVoiceCapture = async () => {
+    if (!captureHandle) return;
+    const handle = captureHandle;
+    captureHandle = null;
+    try {
+      await stopCapture(handle);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      debugError("failed to stop voice capture", { error: message });
+    }
+    setState((prev) => ({ ...prev, isVoiceActive: false }));
+  };
+
   const finalizeLatestAgentMessage = () => {
     setState((prev) => {
       const nextConversation = [...prev.conversation];
@@ -122,28 +144,55 @@ export const createVoiceAgentController = (deps: VoiceAgentControllerDeps): Voic
 
   wsManager.setHandlers({
     onStateChange: (next) => {
+      debug("connection state changed", { next });
       setState((prev) => ({ ...prev, connectionState: next }));
+      if (next !== "connected" && captureHandle) {
+        void stopVoiceCapture();
+      }
     },
     onMessage: (text) => {
+      debug("downstream message received", { length: text.length, preview: text.slice(0, 200) });
       const parsed = handleDownstreamMessage(text);
+      debug("downstream message parsed", { type: parsed.type });
 
       if (parsed.type === "worldPatch") {
-        void applyWorldPatchFromAgent(parsed.patch, deps.systemCalls).then((result) => {
-          setState((prev) => ({
-            ...prev,
-            lastPatchResult: result.ok ? { success: true } : { success: false, error: result.error },
-          }));
-        });
+        debug("worldPatch detected", parsed.patch);
+        void applyWorldPatchFromAgent(parsed.patch, deps.systemCalls)
+          .then((result) => {
+            if (result.ok) {
+              debug("worldPatch applied successfully");
+            } else {
+              debugError("worldPatch rejected", { error: result.error, patch: parsed.patch });
+            }
+            setState((prev) => ({
+              ...prev,
+              lastPatchResult: result.ok ? { success: true } : { success: false, error: result.error },
+            }));
+          })
+          .catch((error) => {
+            const message = error instanceof Error ? error.message : String(error);
+            debugError("worldPatch apply threw exception", { error: message, patch: parsed.patch });
+            setState((prev) => ({
+              ...prev,
+              lastPatchResult: { success: false, error: message },
+            }));
+          });
         return;
       }
 
       if (parsed.type === "error") {
+        debugError("downstream parse error", parsed.message);
         appendConversation("system", parsed.message, "error");
         return;
       }
 
       const payload = parsed.payload;
       const parts = payload.content?.parts ?? [];
+      debug("adk event payload", {
+        turnComplete: Boolean(payload.turnComplete),
+        interrupted: Boolean(payload.interrupted),
+        partsCount: parts.length,
+      });
       for (const part of parts) {
         if (part.text) {
           appendConversation("agent", part.text, payload.turnComplete ? "final" : "streaming");
@@ -164,30 +213,35 @@ export const createVoiceAgentController = (deps: VoiceAgentControllerDeps): Voic
 
   return {
     connect: () => {
+      debug("connect called", { host: deps.host, userId: deps.userId, sessionId: deps.sessionId });
       wsManager.connect(deps.host, deps.userId, deps.sessionId);
     },
     disconnect: () => {
+      debug("disconnect called");
       wsManager.disconnect();
-      if (captureHandle) {
-        void stopCapture(captureHandle);
-        captureHandle = null;
-      }
+      void stopVoiceCapture();
       doInterruptPlayback(playbackHandle);
       void doStopPlayback(playbackHandle);
       setState((prev) => ({ ...prev, isVoiceActive: false }));
     },
     toggleVoice: async () => {
       if (captureHandle) {
-        await stopCapture(captureHandle);
-        captureHandle = null;
-        setState((prev) => ({ ...prev, isVoiceActive: false }));
+        debug("voice capture stopping");
+        await stopVoiceCapture();
         return;
       }
 
+      if (wsManager.getState() !== "connected") {
+        appendConversation("system", "Voice streaming unavailable: establish link first.", "error");
+        return;
+      }
+
+      debug("voice capture starting");
       captureHandle = await startCapture((chunk) => wsManager.sendBinary(chunk));
       setState((prev) => ({ ...prev, isVoiceActive: true }));
     },
     sendText: (text: string) => {
+      debug("text message sending", { text });
       wsManager.sendText({ type: "text", text });
       appendConversation("user", text, "final");
     },
@@ -200,4 +254,3 @@ export const createVoiceAgentController = (deps: VoiceAgentControllerDeps): Voic
     },
   };
 };
-
