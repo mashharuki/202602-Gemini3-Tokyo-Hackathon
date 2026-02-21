@@ -1,0 +1,19 @@
+{
+  "name": "nano-banana",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run ./src/index.ts",
+    "sample2": "bun run ./src/sample2.ts",
+    "sample3": "bun run ./src/sample3.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@google/genai": "^1.42.0"
+  }
+}

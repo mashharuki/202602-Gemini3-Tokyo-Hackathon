@@ -1,0 +1,12 @@
+# Suggested Commands
+- `ls -la` / `find . -maxdepth N -type f` / `rg --files` / `rg "pattern"` for repo exploration.
+- `cd tutorial && pnpm install` to install workspace dependencies.
+- `cd tutorial && pnpm dev` to run concurrent local dev processes.
+- `cd tutorial && pnpm dev:contracts` to run local MUD contracts loop.
+- `cd tutorial && pnpm dev:client` to run the Vite client (expects local chain port 8545).
+- `cd tutorial && pnpm build` to build all workspace packages.
+- `cd tutorial && pnpm test` to run workspace tests (`tsc --noEmit`, `mud test`).
+- `cd tutorial/packages/contracts && pnpm lint` for Solidity formatting/linting.
+- `cd tutorial/packages/contracts && pnpm deploy:local` for local deployment.
+- `cd tutorial && pnpm mud:up` to align MUD CLI versions.
+- `cd tutorial && pnpm foundry:up` if Foundry is missing.
