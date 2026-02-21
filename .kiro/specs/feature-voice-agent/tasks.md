@@ -27,7 +27,7 @@
 **要件**: 4.1, 7
 **依存**: なし（最初に実行）
 
-- [ ] 1. App Server の Python プロジェクトを monorepo 内に新規作成する
+- [x] 1. App Server の Python プロジェクトを monorepo 内に新規作成する
   - `packages/server/` ディレクトリと `agent/` サブディレクトリを作成する
   - `pyproject.toml` に FastAPI, google-adk, uvicorn の依存を定義する
   - `.env.example` に `GOOGLE_API_KEY` の環境変数テンプレートを作成する
@@ -44,7 +44,7 @@
 
 ### 2.1 世界パッチツール関数と Gemini Live エージェントを定義する
 
-- [ ] 2.1 世界パッチツール関数と Gemini Live エージェントを定義する
+- [x] 2.1 世界パッチツール関数と Gemini Live エージェントを定義する
   - `apply_world_patch` ツール関数を定義し、effect, color, intensity, spawn_type, spawn_x, spawn_y, caption パラメータを受け取り、構造化された世界パッチ辞書を返す
   - ツール関数の戻り値に `status: "applied"` と `patch` オブジェクトを含める
   - `gemini-live-2.5-flash-native-audio` モデルを使用する ADK Agent を定義する
@@ -54,7 +54,7 @@
 
 ### 2.2 WebSocket エンドポイントの upstream/downstream 処理を実装する
 
-- [ ] 2.2 WebSocket エンドポイントの upstream/downstream 処理を実装する
+- [x] 2.2 WebSocket エンドポイントの upstream/downstream 処理を実装する
   - FastAPI アプリケーションに `/ws/{user_id}/{session_id}` WebSocket エンドポイントを作成する
   - 接続時に `InMemorySessionService` でセッションを作成/取得する
   - upstream タスクで、binary メッセージを 16kHz PCM 音声として `LiveRequestQueue.send_realtime` に転送する
