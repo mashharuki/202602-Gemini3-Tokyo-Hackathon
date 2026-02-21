@@ -229,6 +229,26 @@ pnpm --filter client dev
 
 - `http://localhost:5173`
 
+### 5) 音声AIエージェントのデプロイ・デストロイ
+
+まずDockerコンテナをビルド
+
+```bash
+pnpm server run build
+```
+
+Cloud Runにデプロイ
+
+```bash
+pnpm server run deploy2cloudrun
+```
+
+cleanup
+
+```bash
+pnpm server run cleanup
+```
+
 ---
 
 ## ディレクトリ構成

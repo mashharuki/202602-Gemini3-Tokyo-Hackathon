@@ -2,11 +2,14 @@ import mudConfig from "contracts/mud.config";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
 import { MUDProvider } from "./context/MUDContext";
+import { fallbackSpriteStore } from "./image-agent/fallbackSpriteStore";
 import { setup } from "./mud/setup";
 
 const rootElement = document.getElementById("react-root");
 if (!rootElement) throw new Error("React root not found");
 const root = ReactDOM.createRoot(rootElement);
+
+void fallbackSpriteStore.preload();
 
 // TODO: figure out if we actually want this to be async or if we should render something else in the meantime
 setup().then(async (result) => {

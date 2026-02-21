@@ -174,7 +174,7 @@
 
 ### 6.1 音声エージェント統合 React フックを実装する
 
-- [ ] 6.1 音声エージェント統合 React フックを実装する
+- [x] 6.1 音声エージェント統合 React フックを実装する
   - `useVoiceAgent` フックで WebSocket 接続管理、音声キャプチャ、イベント処理を統合する
   - `connect` / `disconnect` で WebSocket 接続を制御する
   - `toggleVoice` でマイク入力の開始/停止を切り替え、PCM チャンクを WebSocket 経由で送信する
@@ -187,7 +187,7 @@
 
 ### 6.2 Vite プロキシ設定と音声エージェント UI を統合する
 
-- [ ] 6.2 Vite プロキシ設定と音声エージェント UI を統合する
+- [x] 6.2 Vite プロキシ設定と音声エージェント UI を統合する
   - `vite.config.ts` に `/ws` パスを App Server（`http://localhost:8000`）に転送する WebSocket プロキシを追加する
   - 既存の App.tsx に音声エージェント UI コンポーネントを追加する
   - 接続状態（connecting/connected/disconnected/error）をラベル表示する

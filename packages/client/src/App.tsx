@@ -4,127 +4,60 @@
 
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { getComponentValueStrict, Has } from "@latticexyz/recs";
-import { Canvas, Color, ThreeElements, useThree } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { useMUD } from "./context/MUDContext";
 import { useKeyboardMovement } from "./hooks/useKeyboardMovement";
+import { VoiceAgentPanel } from "./voice/VoiceAgentPanel";
 
 const headerStyle = { backgroundColor: "black", color: "white" };
 const cellStyle = { padding: 20 };
 
-const Plane = () => {
+import { WorldScene } from "./world/WorldScene";
+import { MatrixEffects } from "./world/effects/MatrixEffects";
+import { WorldEffectRenderer } from "./world/effects/WorldEffectRenderer";
+
+const Player = ({ color, position }: { color: number; position: [number, number, number] }) => {
   return (
-    <>
-      <mesh position={[0, -1, 0]}>
-        <boxGeometry args={[20, 0.1, 20]} />
-        <meshStandardMaterial color="#000" opacity={0.9} transparent />
-      </mesh>
-
-      <mesh position={[0, 3, -10]}>
-        <boxGeometry args={[20, 5, 0.1]} />
-        <meshStandardMaterial color="#F00" opacity={0.5} transparent />
-      </mesh>
-
-      <mesh position={[10, 3, 0]}>
-        <boxGeometry args={[0.1, 5, 20]} />
-        <meshStandardMaterial color="#0F0" opacity={0.5} transparent />
-      </mesh>
-
-      <mesh position={[5, 2, 0]}>
-        <sphereGeometry args={[2, 10, 10]} />
-        <meshStandardMaterial color="#FF0" opacity={0.8} transparent />
-      </mesh>
-
-      <mesh position={[0, 2, 5]}>
-        <sphereGeometry args={[2, 10, 10]} />
-        <meshStandardMaterial color="#FF0" opacity={0.8} transparent />
-      </mesh>
-
-      <mesh position={[-5, 2, 0]}>
-        <sphereGeometry args={[2, 10, 10]} />
-        <meshStandardMaterial color="#FF0" opacity={0.8} transparent />
-      </mesh>
-
-      <mesh position={[0, 2, -5]}>
-        <sphereGeometry args={[2, 10, 10]} />
-        <meshStandardMaterial color="#FF0" opacity={0.8} transparent />
-      </mesh>
-
-      <mesh position={[5, 2, -5]}>
-        <sphereGeometry args={[1, 10, 10]} />
-        <meshStandardMaterial color="#008" opacity={0.8} transparent />
-      </mesh>
-
-      <mesh position={[5, 2, 5]}>
-        <sphereGeometry args={[1, 10, 10]} />
-        <meshStandardMaterial color="#008" opacity={0.8} transparent />
-      </mesh>
-
-      <mesh position={[-5, 2, -5]}>
-        <sphereGeometry args={[1, 10, 10]} />
-        <meshStandardMaterial color="#008" opacity={0.8} transparent />
-      </mesh>
-    </>
-  );
-};
-
-const Player = (props: ThreeElements["mesh"] & { color: Color }) => {
-  return (
-    <>
-      <mesh {...props}>
+    <group position={position}>
+      <mesh>
         <boxGeometry args={[1, 2, 1]} />
-        <meshStandardMaterial color={props.color} />
+        <meshStandardMaterial color={color} />
       </mesh>
-      <mesh {...props}>
-        <boxGeometry args={[1, 2, 1]} />
-        <meshStandardMaterial color={props.color} />
-      </mesh>
-    </>
+    </group>
   );
 };
 
 const Scene = () => {
-  const {
-    components: { Position },
-    network: { playerEntity },
-  } = useMUD();
+    const {
+        components: { Position },
+    } = useMUD();
 
-  useKeyboardMovement();
+    useKeyboardMovement();
 
-  const playerPosition = useComponentValue(Position, playerEntity);
-  const players = useEntityQuery([Has(Position)]).map((entity) => {
-    const position = getComponentValueStrict(Position, entity);
-    return {
-      entity,
-      position,
-    };
-  });
+    const players = useEntityQuery([Has(Position)]).map((entity) => {
+        const position = getComponentValueStrict(Position, entity);
+        return {
+            entity,
+            position,
+        };
+    });
 
-  useThree(({ camera }) => {
-    if (playerPosition) {
-      camera.position.set(playerPosition.x - 5, playerPosition.y + 5, playerPosition.z + 5);
-    } else {
-      camera.position.set(-5, 5, 5);
-    }
-    camera.rotation.order = "YXZ";
-    camera.rotation.y = -Math.PI / 4;
-    camera.rotation.x = Math.atan(-1 / Math.sqrt(2));
-  });
+    // We still want to track players, but let's place them in the new WorldScene
+    return (
+        <group>
+            <WorldScene />
+            <WorldEffectRenderer />
+            <MatrixEffects />
 
-  return (
-    <group>
-      <ambientLight />
-      {/* eslint-disable-next-line react/no-unknown-property */}
-      <pointLight position={[10, 10, 10]} />
-      <Plane />
-      {players.map((p, i) => (
-        <Player
-          key={i}
-          color={Math.floor(parseInt(p.entity) * 123456) % 16777215}
-          position={[p.position.x, p.position.y, p.position.z]}
-        />
-      ))}
-    </group>
-  );
+            {players.map((p, i) => (
+                <Player
+                    key={i}
+                    color={Math.floor(parseInt(p.entity) * 123456) % 16777215}
+                    position={[p.position.x, p.position.y, p.position.z]}
+                />
+            ))}
+        </group>
+    );
 };
 
 const styles = { height: "100vh" };
@@ -205,8 +138,11 @@ const PlayerInfo = () => {
 };
 
 export const App = () => {
+  const { systemCalls } = useMUD();
+
   return (
     <>
+      <VoiceAgentPanel systemCalls={systemCalls} />
       <PlayerInfo />
       <Canvas style={styles}>
         <Scene />
