@@ -1,25 +1,20 @@
 /* eslint-disable react/no-unknown-property */
-// Workaround react-three-fiber types by disabling unknown properties:
-// https://github.com/pmndrs/react-three-fiber/discussions/2487
-
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { getComponentValueStrict, Has } from "@latticexyz/recs";
 import { Canvas } from "@react-three/fiber";
+import styled from "styled-components";
+import { GlobalStyles } from "./GlobalStyles";
 import { useMUD } from "./context/MUDContext";
 import { useKeyboardMovement } from "./hooks/useKeyboardMovement";
 import { useWorldEffects } from "./hooks/useWorldEffects";
 import { VoiceAgentPanel } from "./voice/VoiceAgentPanel";
-
-const headerStyle = { backgroundColor: "black", color: "white" };
-const cellStyle = { padding: 20 };
-
+import { SpawnedEntityRenderer } from "./world/SpawnedEntityRenderer";
 import { WorldScene } from "./world/WorldScene";
 import { MatrixEffects } from "./world/effects/MatrixEffects";
-import { WorldRenderSafetyBoundary } from "./world/effects/WorldRenderSafetyBoundary";
 import { WorldEffectRenderer } from "./world/effects/WorldEffectRenderer";
 import { WorldEffectShaderPasses } from "./world/effects/WorldEffectShaderPasses";
+import { WorldRenderSafetyBoundary } from "./world/effects/WorldRenderSafetyBoundary";
 import { useWorldPerformanceState } from "./world/effects/useWorldPerformanceState";
-import { SpawnedEntityRenderer } from "./world/SpawnedEntityRenderer";
 
 const Player = ({ color, position }: { color: number; position: [number, number, number] }) => {
   return (
@@ -31,6 +26,31 @@ const Player = ({ color, position }: { color: number; position: [number, number,
     </group>
   );
 };
+
+const HUD_Position = styled.div`
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 1000;
+  padding: 12px 20px;
+  border-left: 2px solid #00ff41;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+`;
+
+const HUD_Stat = styled.div`
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+
+  span {
+    opacity: 0.5;
+  }
+`;
 
 const Scene = () => {
     const {
@@ -49,7 +69,6 @@ const Scene = () => {
         };
     });
 
-    // We still want to track players, but let's place them in the new WorldScene
     return (
         <group>
             <WorldScene />
@@ -73,20 +92,7 @@ const Scene = () => {
     );
 };
 
-const styles = { height: "100vh" };
-
-const Directions = () => {
-  return (
-    <>
-      <p>
-        You are the rectangular prism, moving around the scene. To move use <b>W</b>, <b>A</b>, <b>S</b>, and <b>D</b>.
-        You can also move up (<b>T</b>) and down (<b>G</b>).
-      </p>
-    </>
-  );
-};
-
-const PlayerInfo = () => {
+const PlayerHUD = () => {
   const {
     components: { Position },
     network: { playerEntity },
@@ -94,72 +100,39 @@ const PlayerInfo = () => {
 
   const playerPosition = useComponentValue(Position, playerEntity);
 
-  if (!playerPosition) {
-    return (
-      <div style={headerStyle}>
-        <table>
-          <tbody>
-            <tr>
-              <td>
-                <h2>Reading player position</h2>
-              </td>
-              <td>
-                <Directions />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-
   return (
-    <div style={headerStyle}>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>Coordinate</th>
-                    <th>Value</th>
-                  </tr>
-                  <tr>
-                    <th>x</th>
-                    <td align="right">{playerPosition.x}</td>
-                  </tr>
-                  <tr>
-                    <th>y</th>
-                    <td align="right">{playerPosition.y}</td>
-                  </tr>
-                  <tr>
-                    <th>z</th>
-                    <td align="right">{playerPosition.z}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-            <td style={cellStyle}>
-              <Directions />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <HUD_Position>
+      <div style={{ fontSize: 10, opacity: 0.4, marginBottom: 8, letterSpacing: 2 }}>LOCAL_POSITION_TELEMETRY</div>
+      <HUD_Stat><span>X</span> {playerPosition?.x ?? '???'}</HUD_Stat>
+      <HUD_Stat><span>Y</span> {playerPosition?.y ?? '???'}</HUD_Stat>
+      <HUD_Stat><span>Z</span> {playerPosition?.z ?? '???'}</HUD_Stat>
+
+      <div style={{ marginTop: 24, fontSize: 10, opacity: 0.4, width: 240, lineHeight: 1.5 }}>
+        WASD to move, TG for elevation.<br/>
+        Neural link established with Echo World Admin.
+      </div>
+    </HUD_Position>
   );
 };
+
+const AppContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-color: #0d0208;
+`;
 
 export const App = () => {
   const { systemCalls } = useMUD();
 
   return (
-    <>
+    <AppContainer>
+      <GlobalStyles />
       <VoiceAgentPanel systemCalls={systemCalls} />
-      <PlayerInfo />
-      <Canvas style={styles}>
+      <PlayerHUD />
+      <Canvas camera={{ position: [10, 10, 10], fov: 45 }}>
         <Scene />
       </Canvas>
-    </>
+    </AppContainer>
   );
 };

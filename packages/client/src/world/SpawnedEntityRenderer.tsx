@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { useLoader } from "@react-three/fiber";
-import { TextureLoader } from "three";
+import { useFrame, useLoader } from "@react-three/fiber";
+import { useMemo, useRef, useState } from "react";
+import { MathUtils, Sprite, TextureLoader } from "three";
 import { useImageAgent, type ResolvedSpawnedAsset } from "../image-agent/useImageAgent";
 
 export const DEFAULT_SPAWN_POSITION: [number, number, number] = [0, 0.5, 0];
@@ -50,10 +50,23 @@ export const createSpawnPlacements = (assets: ReadonlyArray<ResolvedSpawnedAsset
 
 const SpawnedSprite = ({ placement }: { placement: SpawnPlacement }) => {
   const texture = useLoader(TextureLoader, placement.textureDataUrl);
+  const spriteRef = useRef<Sprite>(null);
+  const [scale, setScale] = useState(0);
+
+  useFrame((state, delta) => {
+    if (spriteRef.current) {
+      // Materialize Effect: Scale up from 0 to 1 with some bounce
+      if (scale < 1) {
+        const nextScale = MathUtils.lerp(scale, 1, delta * 4);
+        setScale(nextScale);
+        spriteRef.current.scale.set(nextScale, nextScale, 1);
+      }
+    }
+  });
 
   return (
-    <sprite position={placement.position}>
-      <spriteMaterial map={texture} transparent />
+    <sprite ref={spriteRef} position={placement.position}>
+      <spriteMaterial map={texture} transparent opacity={scale} />
     </sprite>
   );
 };
