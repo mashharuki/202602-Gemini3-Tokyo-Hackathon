@@ -87,8 +87,8 @@ erDiagram
     }
     WorldCaption {
         bytes32 zoneId PK
-        string caption
         uint256 updatedAt
+        string caption
     }
     WorldPatchLog {
         bytes32 patchId PK
@@ -142,9 +142,9 @@ namespace: app
 namespace: app
 キー: [zoneId: bytes32]
 値フィールド:
-  - caption: string     — キャプションテキスト
   - updatedAt: uint256  — 更新時刻 (block.timestamp)
-ストレージ特性: caption は動的長 (dynamic)、updatedAt は固定長 (static)
+  - caption: string     — キャプションテキスト
+ストレージ特性: updatedAt は固定長 (static)、caption は動的長 (dynamic)。MUD制約により静的型を先に配置。
 ```
 
 #### WorldPatchLog (要件 1.4)

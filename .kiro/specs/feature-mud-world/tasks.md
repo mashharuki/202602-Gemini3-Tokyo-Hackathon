@@ -26,13 +26,13 @@
 
 ### 1.1 mud.config.ts にテーブル定義を追加
 
-- [ ] `packages/contracts/mud.config.ts` を開き、既存の `Position` テーブルを保持したまま、以下の5テーブルを `app` namespace の `tables` に追加する:
+- [x] `packages/contracts/mud.config.ts` を開き、既存の `Position` テーブルを保持したまま、以下の5テーブルを `app` namespace の `tables` に追加する:
   - **WorldEffect**: キー `zoneId: bytes32`、値 `effect: bytes32`, `color: bytes3`, `intensity: uint8`
   - **SpawnRecord**: キー `id: bytes32`、値 `entityType: bytes32`, `x: int32`, `y: int32`, `spawnedAt: uint256`
-  - **WorldCaption**: キー `zoneId: bytes32`、値 `caption: string`, `updatedAt: uint256`
+  - **WorldCaption**: キー `zoneId: bytes32`、値 `updatedAt: uint256`, `caption: string`（MUD制約: 静的型が動的型より前）
   - **WorldPatchLog**: キー `patchId: bytes32`、値 `appliedBy: bytes32`, `appliedAt: uint256`
   - **PatchCounter**: キーなし（シングルトン `key: []`）、値 `value: uint256`
-- [ ] `@latticexyz/*` バージョン `2.2.23` との互換性を確認する（`bytes3`, `string`, `uint256` 型が `SchemaAbiType` に含まれること）
+- [x] `@latticexyz/*` バージョン `2.2.23` との互換性を確認する（`bytes3`, `string`, `uint256` 型が `SchemaAbiType` に含まれること）
 
 ### 1.2 codegen の生成とビルド検証
 

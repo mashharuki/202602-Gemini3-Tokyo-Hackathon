@@ -2,9 +2,9 @@
   "feature": "feature-mud-world",
   "description": "MUD (packages/contracts) を用いた世界状態（World State）の同期基盤。Geminiから出力される世界パッチJSON（effect, color, intensity, spawn, caption）をオンチェーンのECSアーキテクチャ（テーブル）としてモデリングし、状態更新を行うSystem（コントラクト）のメソッド仕様を定義する。",
   "language": "ja",
-  "phase": "tasks-generated",
+  "phase": "implementation",
   "created_at": "2026-02-21T00:00:00Z",
-  "updated_at": "2026-02-21T14:00:00Z",
+  "updated_at": "2026-02-21T15:00:00Z",
   "approvals": {
     "requirements": {
       "generated": true,
