@@ -19,7 +19,7 @@ export const useVoiceAgent = (
   systemCalls: SystemCalls,
   options: UseVoiceAgentOptions = {},
 ): VoiceAgentState => {
-  const host = options.host ?? window.location.host;
+  const host = options.host ?? import.meta.env.VITE_BACKEND_URL ?? window.location.host;
   const userId = options.userId ?? "guest";
   const sessionId =
     options.sessionId ?? `session-${Math.random().toString(36).slice(2, 10)}`;

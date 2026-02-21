@@ -2,8 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import styled, { css, keyframes } from "styled-components";
 import { getConnectionStateLabel } from "../connection/connection-state-machine";
 import type { SystemCalls } from "../mud/createSystemCalls";
-import type { ConnectionState } from "./types";
+import type { ConnectionState, ConversationMessage } from "./types";
 import { useVoiceAgent } from "./useVoiceAgent";
+
+type VoiceAgentPanelViewProps = {
+  connectionState: ConnectionState;
+  isVoiceActive: boolean;
+  conversation: ConversationMessage[];
+  lastPatchResult: { success: boolean; error?: string } | null;
+  onConnect: () => void;
+  onDisconnect: () => void;
+  onToggleVoice: () => Promise<void>;
+  onSendText: (text: string) => void;
+};
 
 const scanline = keyframes`
   0% { transform: translateY(-100%); }

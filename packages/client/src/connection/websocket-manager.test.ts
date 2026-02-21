@@ -56,6 +56,17 @@ describe("createWebSocketManager", () => {
     expect(manager.getUrl()).toBe("wss://example.com/ws/u2/s2");
   });
 
+  it("accepts full backend URLs and normalizes to host", () => {
+    const manager = createWebSocketManager({
+      createSocket: (url) => new FakeSocket(url) as unknown as WebSocket,
+      getLocationProtocol: () => "https:",
+      scheduleReconnect: () => undefined,
+    });
+
+    manager.connect("https://cloud-run-voice-agent.example.com", "u3", "s3");
+    expect(manager.getUrl()).toBe("wss://cloud-run-voice-agent.example.com/ws/u3/s3");
+  });
+
   it("sends binary and text payloads only when socket is open", () => {
     const socket = new FakeSocket("ws://localhost/ws/u/s");
     const manager = createWebSocketManager({

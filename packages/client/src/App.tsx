@@ -2,12 +2,14 @@
 import { useComponentValue, useEntityQuery } from "@latticexyz/react";
 import { getComponentValueStrict, Has } from "@latticexyz/recs";
 import { Canvas } from "@react-three/fiber";
+import { Suspense } from "react";
 import styled from "styled-components";
 import { GlobalStyles } from "./GlobalStyles";
 import { useMUD } from "./context/MUDContext";
 import { useKeyboardMovement } from "./hooks/useKeyboardMovement";
 import { useWorldEffects } from "./hooks/useWorldEffects";
 import { VoiceAgentPanel } from "./voice/VoiceAgentPanel";
+import { CharacterModel } from "./world/CharacterModel";
 import { SpawnedEntityRenderer } from "./world/SpawnedEntityRenderer";
 import { WorldScene } from "./world/WorldScene";
 import { MatrixEffects } from "./world/effects/MatrixEffects";
@@ -16,16 +18,7 @@ import { WorldEffectShaderPasses } from "./world/effects/WorldEffectShaderPasses
 import { WorldRenderSafetyBoundary } from "./world/effects/WorldRenderSafetyBoundary";
 import { useWorldPerformanceState } from "./world/effects/useWorldPerformanceState";
 
-const Player = ({ color, position }: { color: number; position: [number, number, number] }) => {
-  return (
-    <group position={position}>
-      <mesh>
-        <boxGeometry args={[1, 2, 1]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
-    </group>
-  );
-};
+
 
 const HUD_Position = styled.div`
   position: fixed;
@@ -55,17 +48,19 @@ const HUD_Stat = styled.div`
 const Scene = () => {
     const {
         components: { Position },
+        network: { playerEntity },
     } = useMUD();
     const activeEffects = useWorldEffects();
     const performanceState = useWorldPerformanceState(activeEffects.length);
 
-    useKeyboardMovement();
+    const { isMoving } = useKeyboardMovement();
 
     const players = useEntityQuery([Has(Position)]).map((entity) => {
         const position = getComponentValueStrict(Position, entity);
         return {
             entity,
             position,
+            isLocal: entity === playerEntity,
         };
     });
 
@@ -81,11 +76,12 @@ const Scene = () => {
             )}
             <SpawnedEntityRenderer />
 
-            {players.map((p, i) => (
-                <Player
-                    key={i}
+            {players.map((p) => (
+                <CharacterModel
+                    key={p.entity}
                     color={Math.floor(parseInt(p.entity) * 123456) % 16777215}
-                    position={[p.position.x, p.position.y, p.position.z]}
+                    position={[p.position.x, 0, p.position.z]}
+                    moving={p.isLocal ? isMoving : false}
                 />
             ))}
         </group>
@@ -131,7 +127,9 @@ export const App = () => {
       <VoiceAgentPanel systemCalls={systemCalls} />
       <PlayerHUD />
       <Canvas camera={{ position: [10, 10, 10], fov: 45 }}>
-        <Scene />
+        <Suspense fallback={null}>
+          <Scene />
+        </Suspense>
       </Canvas>
     </AppContainer>
   );

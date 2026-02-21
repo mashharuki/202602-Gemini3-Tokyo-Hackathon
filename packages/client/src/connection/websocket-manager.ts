@@ -47,15 +47,37 @@ export const createWebSocketManager = (deps: Partial<WebSocketManagerDeps> = {})
     onStateChange?.(state);
   };
 
+  const setStateDirectly = (next: ConnectionState) => {
+    state = next;
+    onStateChange?.(state);
+  };
+
+  const normalizeTargetHost = (targetHost: string): string => {
+    const trimmed = targetHost.trim().replace(/\/$/, "");
+    if (!trimmed) return trimmed;
+
+    if (trimmed.startsWith("ws://") || trimmed.startsWith("wss://") || trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+      try {
+        const parsed = new URL(trimmed);
+        return parsed.host;
+      } catch {
+        return trimmed.replace(/^(ws|wss|http|https):\/\//, "");
+      }
+    }
+
+    return trimmed;
+  };
+
   const buildUrl = (targetHost: string, uid: string, sid: string): string => {
     const wsProtocol = resolvedDeps.getLocationProtocol() === "https:" ? "wss" : "ws";
-    return `${wsProtocol}://${targetHost}/ws/${uid}/${sid}`;
+    const normalizedHost = normalizeTargetHost(targetHost);
+    return `${wsProtocol}://${normalizedHost}/ws/${uid}/${sid}`;
   };
 
   const connectInternal = () => {
     currentUrl = buildUrl(host, userId, sessionId);
     if (state === "reconnecting") {
-      state = "connecting";
+      setStateDirectly("connecting");
     } else {
       setState("connect");
     }
@@ -72,7 +94,11 @@ export const createWebSocketManager = (deps: Partial<WebSocketManagerDeps> = {})
 
     socket.onclose = () => {
       if (reconnectEnabled) {
-        setState("error");
+        if (state === "connecting" || state === "reconnecting") {
+          setState("connect_error");
+        } else {
+          setState("error");
+        }
         setState("retry");
         resolvedDeps.scheduleReconnect(() => {
           if (!reconnectEnabled) return;
@@ -104,7 +130,7 @@ export const createWebSocketManager = (deps: Partial<WebSocketManagerDeps> = {})
       if (socket) {
         socket.close();
       }
-      state = "disconnected";
+      setStateDirectly("disconnected");
     },
     sendBinary: (payload: Int16Array | ArrayBuffer) => {
       if (!socket || socket.readyState !== WebSocket.OPEN) return;
