@@ -6,3 +6,7 @@
 - Workspace structure: pnpm monorepo. Packages include `packages/client` and `packages/contracts` (though README mentions `src/app`, `src/three`, etc., implying potential structure changes or a mix of approaches, so need to verify exact paths per task).
 - Top-level `.kiro/specs/` and `.kiro/steering/` used for spec-driven workflow (Kiro style).
 - Key technical note: Uses "pseudo-streaming" (short chunking 1-2s) for audio to ensure stable JSON generation with fixed schemas.
+- Server package: `packages/server` is Python FastAPI (uvicorn) with image generation and WS endpoints.
+- Server endpoints: `GET /healthz`, `GET /health`, `POST /api/generate-image`, `WS /ws/{user_id}/{session_id}`.
+- CI updates: GitHub Actions installs Python 3.11, builds server package, runs `unittest` in `packages/server/tests`.
+- API test file: `packages/server/test.http` for health, image generation, and WebSocket checks.

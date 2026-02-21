@@ -5,4 +5,7 @@
 - `npm run test` or `pnpm test` at root for recursive tests.
 - Uses `mprocs` for running concurrent dev scripts (`pnpm dev`).
 - `pnpm --filter 'client' run dev` (client dev) and `pnpm --filter 'contracts' dev` (contracts dev).
+- Server package install (Python 3.10+): `python -m pip install -e ./packages/server`.
+- Server package build (Python 3.10+): `python -m build ./packages/server`.
+- Server tests: `python -m unittest discover -s packages/server/tests -p "test_*.py"`.
 - Exploration commands: `ls -la`, `find . -maxdepth N -type f`, `rg --files`, `rg "pattern"`.
