@@ -1,6 +1,8 @@
 # Project Overview
-- Repository: Gemini3 Tokyo Hackathon (2026-02-21)
-- Purpose: Hackathon workspace focused on MUD-based autonomous worlds/full onchain game development.
-- Primary implementation lives under `tutorial/`.
-- Workspace structure: pnpm monorepo with `packages/client` (React + Vite + Three.js) and `packages/contracts` (MUD + Solidity/Foundry).
-- Top-level `.kiro/specs/` and `.kiro/steering/` exist for spec-driven workflow, but currently minimal content in repo.
+- Repository: 202602-Gemini3-Tokyo-Hackathon (Echo Genesis Online - EGO)
+- Purpose: Hackathon workspace for Gemini 3 Tokyo Hackathon (2026-02-21).
+- Concept: "Voice = World Patch" 2D dot life game (god view). Voice input generates structured JSON via Gemini 3, updating Three.js world rules (light, wave, resonance) and spawning Nano Banana pixel art.
+- Architecture: Client (Browser/Three.js) -> App Server (Node TS) -> AI (Gemini 3 JSON, Nano Banana) -> Sync (optional MUD/Chain World).
+- Workspace structure: pnpm monorepo. Packages include `packages/client` and `packages/contracts` (though README mentions `src/app`, `src/three`, etc., implying potential structure changes or a mix of approaches, so need to verify exact paths per task).
+- Top-level `.kiro/specs/` and `.kiro/steering/` used for spec-driven workflow (Kiro style).
+- Key technical note: Uses "pseudo-streaming" (short chunking 1-2s) for audio to ensure stable JSON generation with fixed schemas.

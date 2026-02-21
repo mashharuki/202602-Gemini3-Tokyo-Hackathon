@@ -1,6 +1,14 @@
 # Style and Conventions
-- Language/tooling: TypeScript + React (client), Solidity + MUD (contracts).
-- Node/pnpm requirements from `tutorial/package.json`: Node >= 20, pnpm >= 9.
-- Solidity formatting/linting pipeline exists in `packages/contracts` using Prettier + solhint (+ MUD plugins).
-- General repo guidance lives in `AGENTS.md` and emphasizes spec-driven development, quality, testing, and security.
-- Keep changes small and consistent with existing scripts and package boundaries (`client` vs `contracts`).
+- Language/tooling: TypeScript + React/Vite (client), Three.js (visualization), Node.js (server), Solidity + MUD (if contracts are used).
+- Environment: Node >= 20, pnpm >= 9.
+- Development Process: AI-DLC (AI Development Life Cycle) / Kiro style Spec-Driven Development.
+  - Phase 1 (Spec): Define in `.kiro/specs/` (requirements, design, tasks).
+  - Phase 2 (Implementation): Follow specs, keep code quality high.
+- Code Quality (from AGENTS.md):
+  - Think in English, output in Japanese (unless specified otherwise).
+  - Boy Scout Rule: leave code better than you found it.
+  - DRY principle, meaningful names, consistent styling.
+  - Handle errors properly (no silent @ts-ignore or swallowed catches) and test error cases.
+  - TDD principles by t-wada (Test-Driven Development).
+- Security: No hardcoded secrets (use environment variables), validate inputs, least privilege.
+- Commits: Conventional Commits format (feat:, fix:, docs:, etc.).

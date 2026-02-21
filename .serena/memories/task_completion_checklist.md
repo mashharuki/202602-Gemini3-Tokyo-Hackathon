@@ -1,7 +1,8 @@
 # Task Completion Checklist
-- Run targeted checks for changed area:
-  - Client changes: `cd tutorial/packages/client && pnpm test`.
-  - Contract changes: `cd tutorial/packages/contracts && pnpm test` and `pnpm lint` when Solidity changed.
-- Run workspace-level verification when needed: `cd tutorial && pnpm test` and `pnpm build`.
-- Ensure generated/codegen artifacts and formatting are consistent before finalizing.
-- Summarize modified files and any residual risks/tests not run.
+- Verify changes align with the EGO project concept (voice-driven world patching, stable JSON schema generation).
+- Run targeted checks for the changed area (e.g., client or contracts).
+- For AI/Gemini integration: verify the JSON output strictly adheres to the fixed schema (`effect`, `color`, `intensity`, `spawn`, `caption`).
+- For UI/Three.js integration: ensure visual effects (neon/scanline/particles/bloom - matrix style) update properly based on the state.
+- Ensure generated/codegen artifacts and formatting are consistent.
+- Run workspace-level tests (`npm run test` / `pnpm test`) and builds before finalizing.
+- Summarize modified files and state any residual risks or tests not run.
