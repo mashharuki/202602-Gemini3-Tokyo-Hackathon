@@ -1,13 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import glsl from "vite-plugin-glsl";
+import { readFileSync } from "node:fs";
+import type { Plugin } from "vite";
+
+const GLSL_EXTENSIONS = /\.(glsl|vert|frag|wgsl)$/i;
+
+const glslShaderPlugin = (): Plugin => ({
+  name: "glsl-shader-loader",
+  enforce: "pre",
+  load(id) {
+    if (!GLSL_EXTENSIONS.test(id)) return null;
+    const source = readFileSync(id, "utf-8");
+    return `export default ${JSON.stringify(source)};`;
+  },
+});
 
 export default defineConfig({
   plugins: [
     react(),
-    glsl({
-      include: ["**/*.glsl", "**/*.vert", "**/*.frag", "**/*.wgsl"],
-    }),
+    glslShaderPlugin(),
   ],
   server: {
     port: 3000,

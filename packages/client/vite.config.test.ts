@@ -33,7 +33,8 @@ describe("threejs world task 1 setup", () => {
 
   it("enables glsl shader import support in vite plugins", () => {
     const source = readFileSync(new URL("./vite.config.ts", import.meta.url), "utf-8");
-    expect(source.includes('from "vite-plugin-glsl"')).toBeTrue();
-    expect(source.includes("glsl(")).toBeTrue();
+    expect(source.includes("glsl-shader-loader")).toBeTrue();
+    expect(source.includes("GLSL_EXTENSIONS")).toBeTrue();
+    expect(source.includes("JSON.stringify(source)")).toBeTrue();
   });
 });
