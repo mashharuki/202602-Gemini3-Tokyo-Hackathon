@@ -269,7 +269,3 @@ pnpm --filter client dev
 ## ライセンス
 
 - TODO:
-
-```
-
-```
