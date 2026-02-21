@@ -7,6 +7,7 @@ import { getComponentValueStrict, Has } from "@latticexyz/recs";
 import { Canvas } from "@react-three/fiber";
 import { useMUD } from "./context/MUDContext";
 import { useKeyboardMovement } from "./hooks/useKeyboardMovement";
+import { useWorldEffects } from "./hooks/useWorldEffects";
 import { VoiceAgentPanel } from "./voice/VoiceAgentPanel";
 
 const headerStyle = { backgroundColor: "black", color: "white" };
@@ -14,8 +15,10 @@ const cellStyle = { padding: 20 };
 
 import { WorldScene } from "./world/WorldScene";
 import { MatrixEffects } from "./world/effects/MatrixEffects";
+import { WorldRenderSafetyBoundary } from "./world/effects/WorldRenderSafetyBoundary";
 import { WorldEffectRenderer } from "./world/effects/WorldEffectRenderer";
 import { WorldEffectShaderPasses } from "./world/effects/WorldEffectShaderPasses";
+import { useWorldPerformanceState } from "./world/effects/useWorldPerformanceState";
 import { SpawnedEntityRenderer } from "./world/SpawnedEntityRenderer";
 
 const Player = ({ color, position }: { color: number; position: [number, number, number] }) => {
@@ -33,6 +36,8 @@ const Scene = () => {
     const {
         components: { Position },
     } = useMUD();
+    const activeEffects = useWorldEffects();
+    const performanceState = useWorldPerformanceState(activeEffects.length);
 
     useKeyboardMovement();
 
@@ -48,9 +53,13 @@ const Scene = () => {
     return (
         <group>
             <WorldScene />
-            <WorldEffectRenderer />
-            <WorldEffectShaderPasses />
-            <MatrixEffects />
+            {performanceState.safeMode ? null : (
+                <WorldRenderSafetyBoundary onFatalError={performanceState.reportFatalError}>
+                    <WorldEffectRenderer activeEffects={activeEffects} />
+                    <WorldEffectShaderPasses activeEffects={activeEffects} tierState={performanceState.tierState} />
+                    <MatrixEffects activeEffects={activeEffects} tierState={performanceState.tierState} />
+                </WorldRenderSafetyBoundary>
+            )}
             <SpawnedEntityRenderer />
 
             {players.map((p, i) => (

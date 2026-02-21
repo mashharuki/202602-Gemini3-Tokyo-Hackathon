@@ -1,8 +1,9 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import { useWorldEffects } from "../../hooks/useWorldEffects";
+import type { WorldEffectData } from "../../hooks/useWorldEffects";
 import { buildShaderTargets } from "./effectCompositor";
+import type { PerformanceTierState } from "./performanceTier";
 
 const rippleVertexShader = `
 varying vec2 vUv;
@@ -122,28 +123,36 @@ const ResonancePass = ({
   );
 };
 
-export const WorldEffectShaderPasses = () => {
-  const effects = useWorldEffects();
-  const targets = useMemo(() => buildShaderTargets(effects), [effects]);
+type WorldEffectShaderPassesProps = {
+  activeEffects: WorldEffectData[];
+  tierState: PerformanceTierState;
+};
+
+export const WorldEffectShaderPasses = ({ activeEffects, tierState }: WorldEffectShaderPassesProps) => {
+  const targets = useMemo(() => buildShaderTargets(activeEffects), [activeEffects]);
 
   return (
     <group>
-      {targets.ripple.map((target) => (
-        <RipplePass
-          key={`ripple-${target.key}`}
-          color={target.color}
-          position={target.position}
-          strength={Math.max(0.35, target.intensity / 100)}
-        />
-      ))}
-      {targets.resonance.map((target) => (
-        <ResonancePass
-          key={`res-${target.key}`}
-          color={target.color}
-          position={target.position}
-          strength={Math.max(0.35, target.intensity / 100)}
-        />
-      ))}
+      {tierState.enabledPasses.ripple
+        ? targets.ripple.map((target) => (
+            <RipplePass
+              key={`ripple-${target.key}`}
+              color={target.color}
+              position={target.position}
+              strength={Math.max(0.35, target.intensity / 100)}
+            />
+          ))
+        : null}
+      {tierState.enabledPasses.resonance
+        ? targets.resonance.map((target) => (
+            <ResonancePass
+              key={`res-${target.key}`}
+              color={target.color}
+              position={target.position}
+              strength={Math.max(0.35, target.intensity / 100)}
+            />
+          ))
+        : null}
     </group>
   );
 };

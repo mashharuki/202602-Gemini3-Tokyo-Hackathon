@@ -1,7 +1,8 @@
 import { Bloom, EffectComposer, Noise, Scanline, Vignette } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
-import { useWorldEffects } from "../../hooks/useWorldEffects";
+import type { WorldEffectData } from "../../hooks/useWorldEffects";
 import { computeMatrixComposerState, prioritizeActiveEffects } from "./effectCompositor";
+import type { PerformanceTierState } from "./performanceTier";
 
 export const matrixEffectsConfig = {
   bloom: {
@@ -29,16 +30,20 @@ export const matrixEffectsConfig = {
   },
 };
 
-export const MatrixEffects = () => {
-  const activeEffects = useWorldEffects();
-  const prioritizedEffects = prioritizeActiveEffects(activeEffects, 6);
+type MatrixEffectsProps = {
+  activeEffects: WorldEffectData[];
+  tierState: PerformanceTierState;
+};
+
+export const MatrixEffects = ({ activeEffects, tierState }: MatrixEffectsProps) => {
+  const prioritizedEffects = prioritizeActiveEffects(activeEffects, tierState.maxActiveEffects);
   const composerState = computeMatrixComposerState(prioritizedEffects);
 
   return (
     <EffectComposer enableNormalPass={false}>
       <Bloom
-        intensity={composerState.bloomIntensity}
-        luminanceThreshold={composerState.bloomThreshold}
+        intensity={tierState.enabledPasses.bloom ? composerState.bloomIntensity : 0}
+        luminanceThreshold={tierState.enabledPasses.bloom ? composerState.bloomThreshold : 1}
         luminanceSmoothing={composerState.bloomSmoothing}
         mipmapBlur={matrixEffectsConfig.bloom.mipmapBlur}
       />
@@ -48,14 +53,14 @@ export const MatrixEffects = () => {
         opacity={composerState.scanlineOpacity}
       />
       <Noise
-        opacity={matrixEffectsConfig.noise.opacity}
+        opacity={tierState.enabledPasses.noise ? matrixEffectsConfig.noise.opacity : 0}
         premultiply={matrixEffectsConfig.noise.premultiply}
         blendFunction={matrixEffectsConfig.noise.blendFunction}
       />
       <Vignette
         eskil={matrixEffectsConfig.vignette.eskil}
         offset={matrixEffectsConfig.vignette.offset}
-        darkness={matrixEffectsConfig.vignette.darkness}
+        darkness={tierState.enabledPasses.vignette ? matrixEffectsConfig.vignette.darkness : 0}
       />
     </EffectComposer>
   );

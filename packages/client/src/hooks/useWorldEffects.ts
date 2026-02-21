@@ -2,6 +2,7 @@ import { useEntityQuery } from "@latticexyz/react";
 import { getComponentValue, Has } from "@latticexyz/recs";
 import { useEffect, useMemo, useRef } from "react";
 import { useMUD } from "../context/MUDContext";
+import { recordWorldLifecycleEvent } from "../world/effects/worldLifecycleLog";
 
 export type WorldEffectData = {
   zoneId: string;
@@ -125,6 +126,10 @@ export const useWorldEffects = (): WorldEffectData[] => {
 
   useEffect(() => {
     previousRef.current = normalized;
+  }, [normalized]);
+
+  useEffect(() => {
+    recordWorldLifecycleEvent("update_received", { effects: normalized.length });
   }, [normalized]);
 
   return normalized;

@@ -1,7 +1,8 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useWorldEffects, WorldEffectData } from "../../hooks/useWorldEffects";
+import { WorldEffectData } from "../../hooks/useWorldEffects";
+import { recordWorldLifecycleEvent } from "./worldLifecycleLog";
 
 export type EffectRenderItem = {
   key: string;
@@ -58,9 +59,18 @@ const EffectItem = ({ data }: { data: EffectRenderItem }) => {
     );
 };
 
-export const WorldEffectRenderer = () => {
-    const effects = useWorldEffects();
-    const renderItems = toEffectRenderItems(effects);
+type WorldEffectRendererProps = {
+  activeEffects: WorldEffectData[];
+};
+
+export const WorldEffectRenderer = ({ activeEffects }: WorldEffectRendererProps) => {
+    const renderItems = toEffectRenderItems(activeEffects);
+
+    useEffect(() => {
+        if (renderItems.length > 0) {
+            recordWorldLifecycleEvent("reflection_applied", { rendered: renderItems.length });
+        }
+    }, [renderItems]);
 
     return (
         <group>
