@@ -3,10 +3,32 @@ import { useRef } from "react";
 import * as THREE from "three";
 import { useWorldEffects, WorldEffectData } from "../../hooks/useWorldEffects";
 
-const EffectItem = ({ data }: { data: WorldEffectData }) => {
+export type EffectRenderItem = {
+  key: string;
+  effect: WorldEffectData["effect"];
+  color: string;
+  intensity: number;
+  position: [number, number, number];
+};
+
+export const toEffectRenderItems = (effects: WorldEffectData[]): EffectRenderItem[] => {
+  const latestByZone = new Map<string, WorldEffectData>();
+  for (const effect of effects) {
+    latestByZone.set(effect.zoneId, effect);
+  }
+
+  return Array.from(latestByZone.values()).map((effect) => ({
+    key: effect.zoneId,
+    effect: effect.effect,
+    color: effect.color,
+    intensity: effect.intensity,
+    position: [effect.x, 0.6, effect.y],
+  }));
+};
+
+const EffectItem = ({ data }: { data: EffectRenderItem }) => {
     const meshRef = useRef<THREE.Mesh>(null);
 
-    // Simple pulse animation for any effect
     useFrame((state) => {
         if (!meshRef.current) return;
         const time = state.clock.getElapsedTime();
@@ -14,12 +36,8 @@ const EffectItem = ({ data }: { data: WorldEffectData }) => {
         meshRef.current.scale.set(scale, scale, scale);
     });
 
-    // MUD uses bytes32 for names, which usually come as hex strings
-    // For now, we assume standard effects like '0x...' which we might need to decode
-    // or just match against known patterns.
-    // Simplified for demo:
     return (
-        <group position={[0, 0, 0]}>
+        <group position={data.position}>
             <pointLight
                 intensity={data.intensity / 10}
                 color={data.color}
@@ -42,11 +60,12 @@ const EffectItem = ({ data }: { data: WorldEffectData }) => {
 
 export const WorldEffectRenderer = () => {
     const effects = useWorldEffects();
+    const renderItems = toEffectRenderItems(effects);
 
     return (
         <group>
-            {effects.map((effect, index) => (
-                <EffectItem key={effect.zoneId || index} data={effect} />
+            {renderItems.map((item) => (
+                <EffectItem key={item.key} data={item} />
             ))}
         </group>
     );
