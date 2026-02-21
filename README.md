@@ -3,9 +3,6 @@
 <p align="center">
   <img src="./docs/ego_logo.png" width="300" alt="EGO Logo" />
 </p>
-<p align="center">
-  <img src="./docs/ego_background.png" width="800" alt="EGO Background" />
-</p>
 
 **Echo Genesis Online (EGO)**
 

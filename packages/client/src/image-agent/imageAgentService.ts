@@ -22,14 +22,27 @@ export interface AssetRecord {
   textureDataUrl: string | null;
   fallbackUsed: boolean;
   fallbackReason: "API_ERROR" | "TIMEOUT" | "INVALID_IMAGE" | null;
+  duplicateOf: RequestId | null;
   state: RequestState;
   createdAt: number;
   resolvedAt: number | null;
 }
 
+export interface TransitionLogEntry {
+  requestId: RequestId;
+  from: RequestState | null;
+  to: RequestState;
+  at: number;
+}
+
 type ValidationResult =
   | { valid: true; value: SpawnInput }
   | { valid: false; errors: string[] };
+
+type LoggerLike = {
+  info: (message: string) => void;
+  warn: (message: string) => void;
+};
 
 type ImageAgentServiceOptions = {
   now?: () => number;
@@ -37,6 +50,9 @@ type ImageAgentServiceOptions = {
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
   fallbackSpriteProvider?: (entityType: string) => string;
+  fallbackWarningThreshold?: number;
+  dedupeWindowMs?: number;
+  logger?: LoggerLike;
 };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -50,12 +66,24 @@ export class ImageAgentService {
   private readonly fetchImpl: typeof fetch;
   private readonly timeoutMs: number;
   private readonly fallbackSpriteProvider: (entityType: string) => string;
+  private readonly fallbackWarningThreshold: number;
+  private readonly dedupeWindowMs: number;
+  private readonly logger: LoggerLike;
+  private readonly transitionLogs: TransitionLogEntry[] = [];
+  private readonly recentSpawnMap = new Map<string, { requestId: RequestId; at: number }>();
+  private readonly duplicateGroups = new Map<RequestId, Set<RequestId>>();
   private sequence = 0;
 
   constructor(options: ImageAgentServiceOptions = {}) {
     this.now = options.now ?? Date.now;
     this.fetchImpl = options.fetchImpl ?? fetch;
     this.timeoutMs = options.timeoutMs ?? 5_000;
+    this.fallbackWarningThreshold = options.fallbackWarningThreshold ?? 0.5;
+    this.dedupeWindowMs = options.dedupeWindowMs ?? 3_000;
+    this.logger = options.logger ?? {
+      info: (message: string) => console.info(message),
+      warn: (message: string) => console.warn(message),
+    };
     this.fallbackSpriteProvider =
       options.fallbackSpriteProvider ?? ((entityType) => fallbackSpriteStore.getFallbackSprite(entityType));
     this.createRequestId =
@@ -109,12 +137,15 @@ export class ImageAgentService {
 
     const requestId = this.createRequestId();
     const createdAt = this.now();
+    const spawnKey = this.toSpawnKey(validation.value);
+    const duplicateOf = this.detectDuplicateRequest(spawnKey, createdAt);
     const record: AssetRecord = {
       requestId,
       spawnInput: validation.value,
       textureDataUrl: null,
       fallbackUsed: false,
       fallbackReason: null,
+      duplicateOf,
       state: "ACCEPTED",
       createdAt,
       resolvedAt: null,
@@ -122,6 +153,9 @@ export class ImageAgentService {
 
     this.requestStore.set(requestId, record);
     this.sourcePatchStore.set(requestId, sourcePatch);
+    this.recentSpawnMap.set(spawnKey, { requestId, at: createdAt });
+    this.registerDuplicateGroup(requestId, duplicateOf);
+    this.logTransition(requestId, null, "ACCEPTED");
 
     return record;
   }
@@ -195,13 +229,18 @@ export class ImageAgentService {
   ): AssetRecord {
     const fallbackUrl = this.fallbackSpriteProvider(entityType);
     const resolvedAt = this.now();
-    return this.updateRecord(requestId, {
+    const updated = this.updateRecord(requestId, {
       textureDataUrl: fallbackUrl,
       fallbackUsed: true,
       fallbackReason: reason,
       state,
       resolvedAt,
     });
+    const rate = this.getFallbackRate();
+    if (rate > this.fallbackWarningThreshold) {
+      this.logger.warn(`fallback rate exceeded threshold: ${rate.toFixed(2)}`);
+    }
+    return updated;
   }
 
   private validateGeneratedImagePayload(input: unknown):
@@ -247,7 +286,35 @@ export class ImageAgentService {
     }
     const next: AssetRecord = { ...current, ...patch };
     this.requestStore.set(requestId, next);
+    if (patch.state && patch.state !== current.state) {
+      this.logTransition(requestId, current.state, patch.state);
+    }
     return next;
+  }
+
+  private toSpawnKey(input: SpawnInput): string {
+    return `${input.type}:${input.x}:${input.y}`;
+  }
+
+  private detectDuplicateRequest(spawnKey: string, now: number): RequestId | null {
+    const existing = this.recentSpawnMap.get(spawnKey);
+    if (!existing) return null;
+    if (now - existing.at > this.dedupeWindowMs) return null;
+    return existing.requestId;
+  }
+
+  private registerDuplicateGroup(requestId: RequestId, duplicateOf: RequestId | null): void {
+    const rootId = duplicateOf ?? requestId;
+    if (!this.duplicateGroups.has(rootId)) {
+      this.duplicateGroups.set(rootId, new Set([rootId]));
+    }
+    this.duplicateGroups.get(rootId)!.add(requestId);
+  }
+
+  private logTransition(requestId: RequestId, from: RequestState | null, to: RequestState): void {
+    const entry: TransitionLogEntry = { requestId, from, to, at: this.now() };
+    this.transitionLogs.push(entry);
+    this.logger.info(`[image-agent:${requestId}] ${from ?? "NONE"} -> ${to}`);
   }
 
   getRequestState(requestId: RequestId): RequestState | null {
@@ -260,6 +327,38 @@ export class ImageAgentService {
 
   getSourcePatch(requestId: RequestId): unknown | null {
     return this.sourcePatchStore.get(requestId) ?? null;
+  }
+
+  getFallbackRate(): number {
+    const resolved = [...this.requestStore.values()].filter((record) => record.resolvedAt !== null);
+    if (resolved.length === 0) {
+      return 0;
+    }
+    const fallbackCount = resolved.filter((record) => record.fallbackUsed).length;
+    return fallbackCount / resolved.length;
+  }
+
+  markPlaced(requestId: RequestId): AssetRecord {
+    return this.updateRecord(requestId, { state: "PLACED" });
+  }
+
+  getTransitionLogs(requestId?: RequestId): TransitionLogEntry[] {
+    if (!requestId) {
+      return [...this.transitionLogs];
+    }
+    return this.transitionLogs.filter((entry) => entry.requestId === requestId);
+  }
+
+  getDuplicateGroup(requestId: RequestId): RequestId[] {
+    if (this.duplicateGroups.has(requestId)) {
+      return [...this.duplicateGroups.get(requestId)!];
+    }
+    for (const ids of this.duplicateGroups.values()) {
+      if (ids.has(requestId)) {
+        return [...ids];
+      }
+    }
+    return [requestId];
   }
 }
 
