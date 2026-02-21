@@ -63,8 +63,10 @@ const GlassPanel = styled.div`
     width: 100%;
     height: 100%;
     background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 4px, 3px 100%;
+      linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size:
+      100% 4px,
+      3px 100%;
     pointer-events: none;
   }
 
@@ -97,7 +99,9 @@ const MessageLogs = styled.div`
 
   /* Hide scrollbar but keep functionality */
   scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const MessageBubble = styled.div<{ $role: string }>`
@@ -106,16 +110,21 @@ const MessageBubble = styled.div<{ $role: string }>`
   font-size: 13px;
   line-height: 1.4;
   max-width: 85%;
-  align-self: ${props => props.$role === 'user' ? 'flex-end' : 'flex-start'};
-  background: ${props => props.$role === 'user' ? 'rgba(0, 255, 65, 0.1)' : 'rgba(255, 255, 255, 0.05)'};
-  border-left: 3px solid ${props => {
-    switch(props.$role) {
-      case 'user': return '#00ff41';
-      case 'agent': return '#4af07a';
-      case 'system': return '#ff003c';
-      default: return '#ccc';
-    }
-  }};
+  align-self: ${(props) => (props.$role === "user" ? "flex-end" : "flex-start")};
+  background: ${(props) => (props.$role === "user" ? "rgba(0, 255, 65, 0.1)" : "rgba(255, 255, 255, 0.05)")};
+  border-left: 3px solid
+    ${(props) => {
+      switch (props.$role) {
+        case "user":
+          return "#00ff41";
+        case "agent":
+          return "#4af07a";
+        case "system":
+          return "#ff003c";
+        default:
+          return "#ccc";
+      }
+    }};
 `;
 
 const InputArea = styled.div`
@@ -152,7 +161,7 @@ const StatusIndicator = styled.div<{ $state: ConnectionState }>`
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: ${props => props.$state === 'connected' ? '#00ff41' : '#ff003c'};
+  color: ${(props) => (props.$state === "connected" ? "#00ff41" : "#ff003c")};
   display: flex;
   align-items: center;
   gap: 6px;
@@ -164,7 +173,12 @@ const StatusIndicator = styled.div<{ $state: ConnectionState }>`
     border-radius: 50%;
     background: currentColor;
     box-shadow: 0 0 8px currentColor;
-    animation: ${props => props.$state === 'connected' ? css`${pulse} 2s infinite` : 'none'};
+    animation: ${(props) =>
+      props.$state === "connected"
+        ? css`
+            ${pulse} 2s infinite
+          `
+        : "none"};
   }
 `;
 
@@ -172,24 +186,24 @@ const VoiceCircle = styled.button<{ $active: boolean }>`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  border: 2px solid ${props => props.$active ? '#ff003c' : '#00ff41'};
-  background: ${props => props.$active ? 'rgba(255, 0, 60, 0.1)' : 'rgba(0, 255, 65, 0.05)'};
+  border: 2px solid ${(props) => (props.$active ? "#ff003c" : "#00ff41")};
+  background: ${(props) => (props.$active ? "rgba(255, 0, 60, 0.1)" : "rgba(0, 255, 65, 0.05)")};
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: ${props => props.$active ? '#ff003c' : '#00ff41'};
+  color: ${(props) => (props.$active ? "#ff003c" : "#00ff41")};
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   clip-path: none; /* Override global button style */
   font-size: 10px;
   font-weight: bold;
-  box-shadow: 0 0 15px ${props => props.$active ? 'rgba(255, 0, 60, 0.3)' : 'rgba(0, 255, 65, 0.2)'};
+  box-shadow: 0 0 15px ${(props) => (props.$active ? "rgba(255, 0, 60, 0.3)" : "rgba(0, 255, 65, 0.2)")};
 
   &:hover {
     transform: scale(1.05);
-    background: ${props => props.$active ? 'rgba(255, 0, 60, 0.2)' : 'rgba(0, 255, 65, 0.15)'};
-    box-shadow: 0 0 25px ${props => props.$active ? 'rgba(255, 0, 60, 0.4)' : 'rgba(0, 255, 65, 0.3)'};
+    background: ${(props) => (props.$active ? "rgba(255, 0, 60, 0.2)" : "rgba(0, 255, 65, 0.15)")};
+    box-shadow: 0 0 25px ${(props) => (props.$active ? "rgba(255, 0, 60, 0.4)" : "rgba(0, 255, 65, 0.3)")};
   }
 
   svg {
@@ -233,7 +247,9 @@ export const VoiceAgentPanelView = ({
   return (
     <HUDContainer>
       <ChatSection>
-        <div style={{ fontSize: 10, opacity: 0.6, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Neural Communication Link</div>
+        <div style={{ fontSize: 10, opacity: 0.6, marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>
+          Neural Communication Link
+        </div>
         <MessageLogs ref={scrollRef}>
           {conversation.length === 0 && (
             <div style={{ opacity: 0.3, fontSize: 12, fontStyle: "italic", textAlign: "center", marginTop: 40 }}>
@@ -242,7 +258,9 @@ export const VoiceAgentPanelView = ({
           )}
           {conversation.map((message) => (
             <MessageBubble key={message.id} $role={message.role}>
-              <span style={{ fontWeight: "bold", fontSize: 10, marginRight: 4, textTransform: "uppercase" }}>{message.role}:</span>
+              <span style={{ fontWeight: "bold", fontSize: 10, marginRight: 4, textTransform: "uppercase" }}>
+                {message.role}:
+              </span>
               {message.content}
             </MessageBubble>
           ))}
@@ -252,7 +270,7 @@ export const VoiceAgentPanelView = ({
             value={text}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && text.trim()) {
+              if (e.key === "Enter" && text.trim()) {
                 onSendText(text.trim());
                 setText("");
               }
@@ -271,33 +289,37 @@ export const VoiceAgentPanelView = ({
           </button>
         </InputArea>
         {lastPatchResult && (
-          <div style={{ marginTop: 8, fontSize: 10, color: lastPatchResult.success ? '#00ff41' : '#ff003c' }}>
+          <div style={{ marginTop: 8, fontSize: 10, color: lastPatchResult.success ? "#00ff41" : "#ff003c" }}>
             WORLD_PATCH_OP: {lastPatchResult.success ? "SYNCHRONIZED" : "FAILED_CRC_CHECK"}
           </div>
         )}
       </ChatSection>
 
       <ControlSection>
-        <StatusIndicator $state={connectionState}>
-          {getConnectionStateLabel(connectionState)}
-        </StatusIndicator>
+        <StatusIndicator $state={connectionState}>{getConnectionStateLabel(connectionState)}</StatusIndicator>
 
         <VoiceCircle $active={isVoiceActive} onClick={() => void onToggleVoice()}>
           {isVoiceActive ? (
             <>
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+              </svg>
               STOP
             </>
           ) : (
             <>
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+              </svg>
               OFFLINE
             </>
           )}
         </VoiceCircle>
 
         <ActionButtons>
-          {connectionState !== 'connected' ? (
+          {connectionState !== "connected" ? (
             <MiniButton onClick={onConnect}>Establish Link</MiniButton>
           ) : (
             <MiniButton onClick={onDisconnect}>Terminate Link</MiniButton>
@@ -305,7 +327,9 @@ export const VoiceAgentPanelView = ({
         </ActionButtons>
 
         <div style={{ fontSize: 9, opacity: 0.4, textAlign: "center", marginTop: 4 }}>
-          EGO WORLD_OS v1.0.4<br/>ENCRYPTED BIDI STREAM
+          EGO WORLD_OS v1.0.4
+          <br />
+          ENCRYPTED BIDI STREAM
         </div>
       </ControlSection>
     </HUDContainer>
@@ -327,4 +351,3 @@ export const VoiceAgentPanel = ({ systemCalls }: { systemCalls: SystemCalls }) =
     />
   );
 };
-

@@ -53,7 +53,7 @@ const Scene = () => {
     const activeEffects = useWorldEffects();
     const performanceState = useWorldPerformanceState(activeEffects.length);
 
-    const { isMoving } = useKeyboardMovement();
+    const { isMoving, direction } = useKeyboardMovement();
 
     const players = useEntityQuery([Has(Position)]).map((entity) => {
         const position = getComponentValueStrict(Position, entity);
@@ -82,6 +82,7 @@ const Scene = () => {
                     color={Math.floor(parseInt(p.entity) * 123456) % 16777215}
                     position={[p.position.x, 0, p.position.z]}
                     moving={p.isLocal ? isMoving : false}
+                    direction={p.isLocal ? direction : { x: 0, z: 0 }}
                 />
             ))}
         </group>

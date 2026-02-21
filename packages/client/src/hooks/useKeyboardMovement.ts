@@ -7,19 +7,29 @@ export const useKeyboardMovement = () => {
   } = useMUD();
 
   const [isMoving, setIsMoving] = useState(false);
+  const [direction, setDirection] = useState({ x: 0, z: 0 });
 
   useEffect(() => {
     const pressedKeys = new Set<string>();
 
-    const updateMoving = () => {
+    const updateState = () => {
       setIsMoving(pressedKeys.size > 0);
+
+      let dx = 0;
+      let dz = 0;
+      if (pressedKeys.has("w")) dx += 1;
+      if (pressedKeys.has("s")) dx -= 1;
+      if (pressedKeys.has("a")) dz -= 1;
+      if (pressedKeys.has("d")) dz += 1;
+
+      setDirection({ x: dx, z: dz });
     };
 
     const keyListener = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
       if (["w", "a", "s", "d", "t", "g"].includes(key)) {
         pressedKeys.add(key);
-        updateMoving();
+        updateState();
 
         if (key === "w") moveBy(1, 0, 0);
         if (key === "s") moveBy(-1, 0, 0);
@@ -33,7 +43,7 @@ export const useKeyboardMovement = () => {
     const upListener = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
       pressedKeys.delete(key);
-      updateMoving();
+      updateState();
     };
 
     window.addEventListener("keydown", keyListener);
@@ -44,5 +54,5 @@ export const useKeyboardMovement = () => {
     };
   }, [moveBy]);
 
-  return { isMoving };
+  return { isMoving, direction };
 };

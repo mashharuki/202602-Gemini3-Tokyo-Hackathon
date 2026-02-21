@@ -1,5 +1,5 @@
-import { connectionStateMachine } from "./connection-state-machine";
 import type { ConnectionState } from "../voice/types";
+import { connectionStateMachine } from "./connection-state-machine";
 
 interface WebSocketManagerDeps {
   createSocket: (url: string) => WebSocket;
@@ -56,7 +56,12 @@ export const createWebSocketManager = (deps: Partial<WebSocketManagerDeps> = {})
     const trimmed = targetHost.trim().replace(/\/$/, "");
     if (!trimmed) return trimmed;
 
-    if (trimmed.startsWith("ws://") || trimmed.startsWith("wss://") || trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    if (
+      trimmed.startsWith("ws://") ||
+      trimmed.startsWith("wss://") ||
+      trimmed.startsWith("http://") ||
+      trimmed.startsWith("https://")
+    ) {
       try {
         const parsed = new URL(trimmed);
         return parsed.host;
