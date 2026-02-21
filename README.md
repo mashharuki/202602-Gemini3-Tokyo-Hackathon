@@ -231,19 +231,19 @@ pnpm --filter client dev
 まずDockerコンテナをビルド
 
 ```bash
-pnpm server run build
+pnpm run server build
 ```
 
 Cloud Runにデプロイ
 
 ```bash
-pnpm server run deploy2cloudrun
+pnpm run server deploy2cloudrun
 ```
 
 cleanup
 
 ```bash
-pnpm server run cleanup
+pnpm run server cleanup
 ```
 
 ---
