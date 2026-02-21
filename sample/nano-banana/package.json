@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun run ./src/index.ts",
     "sample2": "bun run ./src/sample2.ts",
-    "sample3": "bun run ./src/sample3.ts"
+    "sample3": "bun run ./src/sample3.ts",
+    "generate-images": "bun run ./src/generateImages.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
