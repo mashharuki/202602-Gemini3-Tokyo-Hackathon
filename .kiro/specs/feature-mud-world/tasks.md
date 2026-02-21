@@ -142,6 +142,6 @@
 
 ### 4.3 TypeScript 型チェックの実行
 
-- [ ] `packages/client` ディレクトリで `pnpm run test`（`tsc --noEmit`）を実行し、型エラーがないことを確認する
-- [ ] `createSystemCalls` の戻り値型に新関数が正しく含まれていることを確認する
-- [ ] `MUDContext` 経由で新しい systemCalls にアクセスできることを型レベルで確認する
+- [x] `packages/client` ディレクトリで `pnpm run test`（`tsc --noEmit`）を実行し、型エラーがないことを確認する
+- [x] `createSystemCalls` の戻り値型に新関数が正しく含まれていることを確認する
+- [x] `MUDContext` 経由で新しい systemCalls にアクセスできることを型レベルで確認する
