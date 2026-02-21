@@ -1,7 +1,8 @@
 import { useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { Group } from "three";
+import { Group, Vector3 } from "three";
+import * as SkeletonUtils from "three/examples/jsm/utils/SkeletonUtils.js";
 
 type CharacterModelProps = {
   position: [number, number, number];
@@ -16,8 +17,8 @@ export const CharacterModel = ({ position, moving, direction = { x: 0, z: 0 }, c
   const { scene, animations } = useGLTF("/RobotExpressive.glb");
   const { actions } = useAnimations(animations, group);
 
-  // Clone the scene for multi-player support (important as 'scene' is shared)
-  const clone = useMemo(() => scene.clone(), [scene]);
+  // SkeletonUtils.clone is essential for SkinnedMeshes to work in clones
+  const clone = useMemo(() => SkeletonUtils.clone(scene) as Group, [scene]);
 
   useEffect(() => {
     const idleAction = actions["Idle"];
@@ -39,14 +40,27 @@ export const CharacterModel = ({ position, moving, direction = { x: 0, z: 0 }, c
 
   const targetRotation = useRef(0);
   const currentRotation = useRef(0);
+  const targetPos = useMemo(() => new Vector3(...position), [position]);
+  const currentPos = useRef(new Vector3(...position));
 
   useFrame((state, delta) => {
-    if (!innerGroup.current) return;
+    if (!group.current || !innerGroup.current) return;
 
+    // 1. Smooth Position Lerping
+    // We expect position prop to be [x, y, z]
+    const [tx, ty, tz] = position;
+    targetPos.set(tx, ty, tz);
+
+    // Lerp current position towards target
+    currentPos.current.lerp(targetPos, delta * 12);
+    group.current.position.copy(currentPos.current);
+
+    // 2. Smooth Rotation logic
     if (moving && (direction.x !== 0 || direction.z !== 0)) {
         targetRotation.current = Math.atan2(direction.z, direction.x);
     } else {
-        targetRotation.current = Math.atan2(10 - position[2], 10 - position[0]);
+        // Face camera when idle. Camera is at [10, 10, 10].
+        targetRotation.current = Math.atan2(10 - currentPos.current.z, 10 - currentPos.current.x);
     }
 
     let diff = targetRotation.current - currentRotation.current;
@@ -58,7 +72,7 @@ export const CharacterModel = ({ position, moving, direction = { x: 0, z: 0 }, c
   });
 
   return (
-    <group ref={group} position={position} dispose={null}>
+    <group ref={group} dispose={null}>
       <group ref={innerGroup} scale={1.2}>
         <primitive object={clone} />
       </group>
