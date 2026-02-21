@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Oswald:wght@600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  color: #f1f5f9;
+  background: #0b0e13;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans JP", "Hiragino Sans", sans-serif;
+  background:
+    radial-gradient(1200px 500px at 10% -20%, rgba(0, 212, 170, 0.12), transparent 60%),
+    radial-gradient(900px 400px at 90% -10%, rgba(255, 122, 61, 0.14), transparent 58%),
+    #0b0e13;
+  color: #f1f5f9;
+}

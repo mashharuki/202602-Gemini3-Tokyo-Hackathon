@@ -86,16 +86,22 @@ flowchart LR
     UI["Browser / Three.js UI"];
   end
 
-  subgraph Server
-    S["App Server Node TS"];
+  subgraph Backend["Google Cloud Backend"]
+    S["Cloud Run Service"];
+    O["ADK Orchestrator"];
     W["World State"];
     A["Spawn Asset"];
   end
 
-  subgraph AI
+  subgraph Agents["ADK Multi-Agent"]
+    V["Voice Dialogue Agent"];
+    I["Image Generation Agent"];
+  end
+
+  subgraph AI["Google AI Models"]
     G["Gemini 3 JSON Mode"];
+    IMG["Image Generation Model"];
     P["World Patch JSON"];
-    N["Nano Banana pixel generation"];
   end
 
   subgraph Sync
@@ -104,21 +110,28 @@ flowchart LR
   end
 
   UI -->|"mic / short-chunk audio"| S;
-  S --> G;
+  S --> O;
+  O --> V;
+  O --> I;
+  V --> G;
   G --> P;
   P --> W;
-  S --> W;
-  S --> N;
-  N --> A;
-  S --> A;
+  O --> W;
+  I --> IMG;
+  IMG --> A;
+  O --> A;
+  W --> UI;
+  A --> UI;
   S --> C;
   C --> UI2;
 ```
 
 ポイント：
 
-- UXはライブだが、内部は **短区切り送信**で安定性を優先（“ストリーミング風”）
-- 出力は **固定スキーマJSON** で型安全に反映
+- バックエンドは **Cloud Run** 上で稼働し、入口を1つにまとめて運用しやすくする
+- 制御は **ADK Orchestrator** が担い、**音声対話エージェント** と **画像生成エージェント** を役割分離したマルチエージェントで処理する
+- 音声対話側は **Gemini 3(JSON Mode)** で固定スキーマJSONを生成し、世界状態へ型安全に反映する
+- 画像生成側は専用エージェント経由でアセット化し、世界にスポーンさせる
 - 「オンチェーンの価値」は**資産化**ではなく **共有世界の合意形成**（同じ世界状態の同期）
 
 ---
@@ -129,66 +142,67 @@ flowchart LR
 2. マイクをONにして短い発話をする
    例：「荒野に、孤独なドラゴンの王を。彼は音楽を愛している」
 3. 右上に **パッチJSON** が表示され、世界の **光/波紋/共鳴** が変化する
-4. Nano Banana の生成物がスポーンする
+4. 画像生成エージェントの生成物がスポーンする
 5. （可能なら決定打）別タブ/別端末で同じ変化が同期していることを見せる
 
 ---
 
 ## クイックスタート（ローカル起動）
 
-> このREADMEは「動かせる」ことを優先して、一般的な構成で記載しています。
-> 実装が単一アプリの場合でも、envとコマンドだけ合わせればOKです。
+> このリポジトリは **pnpm workspace** 構成です（`packages/client` + `packages/contracts`）。
 
 ### 1) 必要要件
 
-- Node.js 18+（推奨 20+）
-- npm / pnpm / yarn いずれか
-- Gemini 3 のAPIキー
-- Nano Banana のAPIキー/クレジット
-- （任意）MUD/チェーン接続情報
+- Node.js 20+
+- pnpm 9+
+- Foundry / Anvil（`anvil` コマンドが使えること）
 
 ### 2) インストール
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 3) 環境変数
 
-`.env.example` を `.env` にコピーして編集してください。
+`packages/contracts/.env.example` をコピーして `.env` を作成してください。
 
 ```bash
-cp .env.example .env
+cp packages/contracts/.env.example packages/contracts/.env
 ```
 
-`.env.example`（例）：
+`packages/client/.env` は最低限 `VITE_CHAIN_ID=31337` を設定してください。
+
+```bash
+echo "VITE_CHAIN_ID=31337" > packages/client/.env
+```
+
+`packages/contracts/.env.example`（例）：
 
 ```env
-# --- AI ---
-GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
-GEMINI_MODEL="gemini-3"
+# Enable debug logs for MUD CLI
+DEBUG=mud:*
 
-# --- Nano Banana ---
-NANOBANANA_API_KEY="YOUR_NANOBANANA_API_KEY"
-NANOBANANA_MODEL="nano-banana-pro"
-
-# --- Audio / UX ---
-AUDIO_CHUNK_MS="1200"              # “ストリーミング風”の短区切り(ミリ秒)
-PATCH_TIMEOUT_MS="12000"           # 生成タイムアウト（デモ用に短め推奨）
-
-# --- Shared World (optional) ---
-ENABLE_CHAIN_SYNC="false"
-RPC_URL=""
-WORLD_ID="ego-demo"
-
-# --- App ---
-PORT="5173"
+# Anvil default private key:
+PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 ```
 
 ### 4) 起動
 
+一括起動（推奨）：
+
 ```bash
-npm run dev
+pnpm dev
+```
+
+上記は `mprocs` で `anvil / contracts / client / explorer` を同時起動します。
+
+個別起動する場合：
+
+```bash
+anvil --base-fee 0 --block-time 2
+pnpm --filter contracts dev
+pnpm --filter client dev
 ```
 
 ブラウザで表示（例）：
@@ -197,22 +211,33 @@ npm run dev
 
 ---
 
-## ディレクトリ構成（例）
+## ディレクトリ構成（現状ベース）
 
 ```
 .
-├─ src/
-│  ├─ app/                  # UI / 画面
-│  ├─ three/                # Three.js scene, shaders, postprocess
-│  ├─ audio/                # mic capture, chunking
-│  ├─ ai/                   # Gemini client, JSON schema, retry
-│  ├─ nanobanana/           # pixel gen client, fallback assets
-│  ├─ world/                # world state, patch apply, sync
-│  └─ server/               # API routes (if needed)
-├─ public/
-│  └─ fallback-sprites/     # 予備スプライト（生成失敗時）
-├─ .env.example
+├─ packages/
+│  ├─ client/               # フロントエンド（Vite + React + MUD client）
+│  │  ├─ src/
+│  │  │  ├─ App.tsx
+│  │  │  ├─ MUDContext.tsx
+│  │  │  ├─ useKeyboardMovement.ts
+│  │  │  └─ mud/
+│  │  └─ vite.config.ts
+│  └─ contracts/            # スマートコントラクト（MUD / Foundry）
+│     ├─ src/
+│     │  ├─ systems/
+│     │  └─ codegen/
+│     ├─ mud.config.ts
+│     └─ foundry.toml
+├─ design/
+│  └─ pencil-new.pen        # 画面設計ファイル
+├─ sample/
+│  ├─ isometric-rpg/        # 参考実装（Three.js系）
+│  ├─ my-ts-agent/          # 参考実装（TypeScript Agent）
+│  └─ nano-banana/          # 参考実装（画像生成）
+├─ pnpm-workspace.yaml
 ├─ package.json
+├─ tsconfig.json
 └─ README.md
 ```
 
