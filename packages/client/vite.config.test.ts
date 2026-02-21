@@ -9,4 +9,11 @@ describe("vite ws proxy", () => {
     expect(proxy["/ws"].target).toBe("http://localhost:8000");
     expect(proxy["/ws"].ws).toBeTrue();
   });
+
+  it("forwards /api to image generation server", () => {
+    const proxy = config.server?.proxy as Record<string, { target: string; ws?: boolean }>;
+    expect(proxy).toBeDefined();
+    expect(proxy["/api"]).toBeDefined();
+    expect(proxy["/api"].target).toBe("http://localhost:8080");
+  });
 });
